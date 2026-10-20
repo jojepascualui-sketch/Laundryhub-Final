@@ -47,6 +47,7 @@ public final class TrackOrderPage extends Page {
     private static final int REFRESH_MILLIS = 10000;
     private static final int MAP_PADDING = 48;
     private static final int ZOOM_SINGLE = 15;
+    private static final int RIDER_GLIDE_MILLIS = 1500;
 
     private final AppContext ctx;
     private final long orderId;
@@ -412,7 +413,8 @@ public final class TrackOrderPage extends Page {
                 riderMarker = GoogleMaps.createMarker(map, riderAt.getLat(), riderAt.getLng(),
                         GoogleMaps.MarkerStyle.RIDER, false, "Rider");
             } else {
-                riderMarker.setPosition(GoogleMaps.latLng(riderAt.getLat(), riderAt.getLng()));
+                riderMarker.setVisible(true);
+                GoogleMaps.animateMarker(riderMarker, riderAt.getLat(), riderAt.getLng(), RIDER_GLIDE_MILLIS);
             }
         } else if (riderMarker != null) {
             riderMarker.setVisible(false);

@@ -279,7 +279,7 @@ public final class OrderWizardPage extends Page {
 
     private void buildDeliveryStep(HTMLElement box) {
         box.appendChild(Dom.text("p", "wizard__hint",
-                "Tap the map to pin where our rider should pick up and return your laundry."));
+                "Move the map so the pin is where our rider should pick up and return your laundry."));
         box.appendChild(new LocationPicker(catalog.getSettings(), draft.getPin(), location -> {
             draft.setPin(location);
             update();

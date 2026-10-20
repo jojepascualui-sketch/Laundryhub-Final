@@ -12,6 +12,7 @@ public class JobMap extends Component {
 
     private static final int PADDING = 56;
     private static final int ZOOM = 15;
+    private static final int RIDER_GLIDE_MILLIS = 1200;
 
     private final Location shop;
     private final Location customer;
@@ -92,7 +93,7 @@ public class JobMap extends Component {
                 riderMarker = GoogleMaps.createMarker(map, rider.getLat(), rider.getLng(),
                         GoogleMaps.MarkerStyle.RIDER, false, "You");
             } else {
-                riderMarker.setPosition(GoogleMaps.latLng(rider.getLat(), rider.getLng()));
+                GoogleMaps.animateMarker(riderMarker, rider.getLat(), rider.getLng(), RIDER_GLIDE_MILLIS);
             }
         }
         if (line != null) {

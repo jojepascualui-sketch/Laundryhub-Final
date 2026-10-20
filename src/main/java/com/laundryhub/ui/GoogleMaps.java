@@ -185,6 +185,123 @@ public final class GoogleMaps {
     public static native GMap createMap(HTMLElement element, double lat, double lng, int zoom);
 
     /**
+     * Map for the pickup-point picker (like ride-hailing apps): no default buttons at all, the page
+     * draws its own "my location" button and a fixed pin in the center.
+     *
+     * @param element container (needs a height)
+     * @param lat     center latitude
+     * @param lng     center longitude
+     * @param zoom    zoom level
+     * @return the map
+     */
+    @JSBody(params = {"element", "lat", "lng", "zoom"}, script = ""
+            + "return new google.maps.Map(element, { center: { lat: lat, lng: lng }, zoom: zoom,"
+            + " disableDefaultUI: true, clickableIcons: false, gestureHandling: 'greedy', keyboardShortcuts: false });")
+    public static native GMap createPickerMap(HTMLElement element, double lat, double lng, int zoom);
+
+    /**
+     * @param map map
+     * @return the current center
+     */
+    @JSBody(params = "map", script = "return map.getCenter();")
+    public static native LatLng getCenter(GMap map);
+
+    /**
+     * Fires when the map stops moving (after a drag, a pan or a zoom).
+     *
+     * @param map     map
+     * @param handler receives the new center
+     * @return the listener
+     */
+    @JSBody(params = {"map", "handler"}, script = ""
+            + "return map.addListener('idle', function () { handler(map.getCenter()); });")
+    public static native Listener onMapIdle(GMap map, PositionHandler handler);
+
+    /** Receives a signal without data. */
+    @JSFunctor
+    public interface Signal extends JSObject {
+        /** Called on the event. */
+        void fire();
+    }
+
+    /**
+     * Fires when the user starts dragging the map.
+     *
+     * @param map     map
+     * @param handler called on drag start
+     * @return the listener
+     */
+    @JSBody(params = {"map", "handler"}, script = "return map.addListener('dragstart', function () { handler(); });")
+    public static native Listener onMapDragStart(GMap map, Signal handler);
+
+    /**
+     * Smoothly pans to a point and zooms in to at least the given level.
+     *
+     * @param map     map
+     * @param lat     latitude
+     * @param lng     longitude
+     * @param minZoom zoom level to reach (kept when already closer)
+     */
+    @JSBody(params = {"map", "lat", "lng", "minZoom"}, script = ""
+            + "if (map.getZoom() < minZoom) { map.setZoom(minZoom); } map.panTo({ lat: lat, lng: lng });")
+    public static native void flyTo(GMap map, double lat, double lng, int minZoom);
+
+    /** Receives address search results as JSON: [{"address":…, "lat":…, "lng":…}, …]. */
+    @JSFunctor
+    public interface SearchHandler extends JSObject {
+        /**
+         * @param resultsJson results as a JSON array text
+         * @param status      Geocoder status, e.g. OK, ZERO_RESULTS
+         */
+        void handle(String resultsJson, String status);
+    }
+
+    /**
+     * Searches an address or landmark in the Philippines (Geocoding API), preferring results near a point.
+     *
+     * @param query   what the user typed
+     * @param nearLat latitude to prefer (e.g. the shop)
+     * @param nearLng longitude to prefer
+     * @param handler receives up to 5 results
+     */
+    @JSBody(params = {"query", "nearLat", "nearLng", "handler"}, script = ""
+            + "var lhBias = new google.maps.LatLngBounds({ lat: nearLat - 0.08, lng: nearLng - 0.08 },"
+            + "  { lat: nearLat + 0.08, lng: nearLng + 0.08 });"
+            + "new google.maps.Geocoder().geocode({ address: query, bounds: lhBias, componentRestrictions: { country: 'PH' } },"
+            + "  function (results, status) {"
+            + "    var lhOut = [];"
+            + "    if (status === 'OK' && results) {"
+            + "      for (var lhI = 0; lhI < results.length && lhI < 5; lhI++) {"
+            + "        var lhLoc = results[lhI].geometry.location;"
+            + "        lhOut.push({ address: results[lhI].formatted_address, lat: lhLoc.lat(), lng: lhLoc.lng() });"
+            + "      }"
+            + "    }"
+            + "    handler(JSON.stringify(lhOut), String(status));"
+            + "  });")
+    public static native void searchAddress(String query, double nearLat, double nearLng, SearchHandler handler);
+
+    /**
+     * Moves a marker smoothly to a new position (instead of jumping), like live rider tracking apps.
+     *
+     * @param marker   marker
+     * @param lat      new latitude
+     * @param lng      new longitude
+     * @param millis   animation time
+     */
+    @JSBody(params = {"marker", "lat", "lng", "millis"}, script = ""
+            + "var lhFrom = marker.getPosition(); if (!lhFrom) { marker.setPosition({ lat: lat, lng: lng }); return; }"
+            + "var lhLat0 = lhFrom.lat(), lhLng0 = lhFrom.lng(), lhStart = null;"
+            + "if (marker.lhAnim) cancelAnimationFrame(marker.lhAnim);"
+            + "function lhStep(t) {"
+            + "  if (lhStart === null) lhStart = t;"
+            + "  var lhP = Math.min(1, (t - lhStart) / millis); var lhE = lhP * (2 - lhP);"
+            + "  marker.setPosition({ lat: lhLat0 + (lat - lhLat0) * lhE, lng: lhLng0 + (lng - lhLng0) * lhE });"
+            + "  if (lhP < 1) marker.lhAnim = requestAnimationFrame(lhStep);"
+            + "}"
+            + "marker.lhAnim = requestAnimationFrame(lhStep);")
+    public static native void animateMarker(Marker marker, double lat, double lng, int millis);
+
+    /**
      * @param map       map
      * @param lat       latitude
      * @param lng       longitude

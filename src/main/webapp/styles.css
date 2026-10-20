@@ -945,3 +945,68 @@ button:disabled { cursor: not-allowed; }
   .install-card .btn { order: 4; flex: 1 0 100%; }
   .install-card__close { order: 3; }
 }
+
+/* ------------------------------------- pickup-point picker (ride-hailing style) */
+.picker { position: relative; display: flex; flex-direction: column; gap: 12px; }
+.picker__map {
+  position: relative; height: clamp(320px, 56vh, 520px); border-radius: 22px; overflow: hidden;
+  border: 2px solid var(--border-strong); background: var(--map-bg);
+}
+.picker__map--static { cursor: pointer; }
+.picker__canvas { position: absolute; inset: 0; }
+
+.picker__search {
+  position: absolute; top: 12px; left: 12px; right: 12px; z-index: 6;
+  background: #fff; border-radius: 16px; box-shadow: 0 6px 20px rgba(20, 33, 43, .16);
+}
+.picker__search-icon { position: absolute; left: 14px; top: 15px; color: var(--muted); }
+.picker__search-input {
+  width: 100%; min-height: 48px; border: none; border-radius: 16px; background: transparent;
+  padding: 0 14px 0 42px; font-size: 15px;
+}
+.picker__search-input:focus { outline: none; box-shadow: var(--focus-ring); }
+.picker__results { list-style: none; margin: 0; padding: 4px 0 6px; border-top: 1px solid var(--divider); max-height: 240px; overflow-y: auto; }
+.picker__result {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; font-size: 14px; cursor: pointer; line-height: 1.35;
+}
+.picker__result:hover, .picker__result:focus { background: var(--accent-selected-bg); outline: none; }
+.picker__result-icon { color: var(--accent); margin-top: 1px; }
+.picker__result--empty { color: var(--muted); cursor: default; }
+.picker__result--empty:hover { background: none; }
+
+/* pin fixed in the middle of the map; the map moves under it */
+.picker__pin {
+  position: absolute; left: 50%; top: 50%; z-index: 4; pointer-events: none;
+  width: 34px; height: 44px; margin-left: -17px; margin-top: -44px;
+  transition: transform .15s ease-out;
+}
+.picker__pin-icon { display: block; filter: drop-shadow(0 3px 4px rgba(20, 33, 43, .35)); }
+.picker__pin-shadow {
+  position: absolute; left: 50%; bottom: -4px; width: 14px; height: 5px; margin-left: -7px;
+  border-radius: 50%; background: rgba(20, 33, 43, .35); transition: transform .15s, opacity .15s;
+}
+.picker__pin.is-moving { transform: translateY(-14px); }
+.picker__pin.is-moving .picker__pin-shadow { transform: translateY(14px) scale(.7); opacity: .5; }
+.picker__map:not(.has-pin) .picker__pin { animation: pin-hint 1.6s ease-in-out 2; }
+@keyframes pin-hint { 0%, 100% { transform: none; } 50% { transform: translateY(-8px); } }
+
+.picker__locate {
+  position: absolute; right: 12px; bottom: 12px; z-index: 5;
+  width: 48px; height: 48px; border-radius: 24px; border: none; background: #fff; color: var(--accent);
+  box-shadow: 0 4px 14px rgba(20, 33, 43, .2); display: flex; align-items: center; justify-content: center;
+}
+.picker__locate.is-loading .icon { animation: spin 1s linear infinite; }
+
+.picker__card {
+  display: flex; gap: 12px; align-items: center; background: #fff; border-radius: var(--radius-tile); padding: 14px;
+}
+.picker__card-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--warn-bg); color: var(--pin); }
+.picker__card-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.picker__card-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.picker__card-address { font-size: 15px; font-weight: 700; line-height: 1.35; }
+.picker__map.is-outside { border-color: var(--pin); }
+
+@media (prefers-reduced-motion: reduce) {
+  .picker__pin, .picker__pin-shadow { transition: none; }
+  .picker__map:not(.has-pin) .picker__pin { animation: none; }
+}
