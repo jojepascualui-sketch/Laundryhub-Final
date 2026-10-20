@@ -6,7 +6,7 @@
   "outputDirectory": ".",
   "cleanUrls": false,
   "rewrites": [
-    { "source": "/((?!js/|fonts/|icons/|styles\\.css|config\\.js|sw\\.js|manifest\\.webmanifest).*)", "destination": "/index.html" }
+    { "source": "/((?!js/|fonts/|icons/|img/|styles\\.css|config\\.js|sw\\.js|manifest\\.webmanifest).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

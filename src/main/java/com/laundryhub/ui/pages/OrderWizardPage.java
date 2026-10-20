@@ -55,18 +55,11 @@ public final class OrderWizardPage extends Page {
     /** Soap tile tints from the design, used in order. */
     private static final String[] SOAP_TINTS = {"#E4EEF8", "#E6F2EA", "#F3E8F7", "#FFF1E8"};
     private static final int MAX_KG = 100;
-    /** Shown size of the QR image in px. */
-    private static final int QR_SIZE = 220;
     /** How to pay with the QR Ph code. */
     private static final String[] GCASH_QR_STEPS = {
         "Open GCash → Pay QR and scan the code (on this phone: Save QR, then Upload QR).",
         "Or use Send Money to our GCash number.",
         "Pay the exact amount, then enter the 13-digit reference number below."};
-    /** How to pay with GCash Send Money (the shop checks the reference number). */
-    private static final String[] GCASH_STEPS = {
-        "Open GCash → Send Money → Express Send.",
-        "Paste our number and send the exact amount.",
-        "Copy the 13-digit reference number from the receipt and enter it below."};
 
     private final AppContext ctx;
     private final int step;
@@ -391,9 +384,8 @@ public final class OrderWizardPage extends Page {
         sendTo.appendChild(Dom.div("gcash-card__head", Dom.text("span", null, "Send "), amount,
                 Dom.text("span", null, " to our GCash, then enter the reference number below.")));
         if (Validators.hasText(s.getGcashNumber())) {
-            if (s.getGcashQrPath() != null) {
-                sendTo.appendChild(qrBlock(ctx.getCatalog().gcashQrUrl(s.getGcashQrPath())));
-            }
+            sendTo.appendChild(qrBlock(s.getGcashQrPath() != null
+                    ? ctx.getCatalog().gcashQrUrl(s.getGcashQrPath()) : ShopSettings.BUILT_IN_GCASH_QR));
             String shopNumber = Validators.compact(s.getGcashNumber());
             HTMLElement copy = Dom.text("button", "gcash-card__copy", "Copy");
             copy.setAttribute("type", "button");
@@ -408,7 +400,7 @@ public final class OrderWizardPage extends Page {
                 sendTo.appendChild(summaryRow("Account name", s.getGcashAccountName()));
             }
             HTMLElement steps = Dom.el("ol", "gcash-card__steps");
-            for (String step : s.getGcashQrPath() != null ? GCASH_QR_STEPS : GCASH_STEPS) {
+            for (String step : GCASH_QR_STEPS) {
                 steps.appendChild(Dom.text("li", null, step));
             }
             sendTo.appendChild(steps);
@@ -458,16 +450,15 @@ public final class OrderWizardPage extends Page {
         HTMLElement img = Dom.el("img", "gcash-qr__img");
         img.setAttribute("src", url);
         img.setAttribute("alt", "GCash QR Ph code of The Laundry Hub Iloilo");
-        img.setAttribute("width", String.valueOf(QR_SIZE));
-        img.setAttribute("height", String.valueOf(QR_SIZE));
         img.setAttribute("loading", "lazy");
+        String ext = url.substring(url.lastIndexOf('.') + 1);
         Button saveQr = new Button("Save QR", Button.Variant.OUTLINE, () -> {
-            Browser.saveFile(url, "laundryhub-gcash-qr.png");
+            Browser.saveFile(url, "laundryhub-gcash-qr." + ext);
             Toast.success("QR saved. In GCash tap Pay QR → Upload QR.");
         });
         saveQr.getElement().getClassList().add("btn--small");
         return Dom.div("gcash-qr", Dom.text("span", "gcash-qr__badge", "QR Ph"), img,
-                Dom.text("span", "gcash-qr__caption", "Scan with GCash or any QR Ph bank app"), saveQr.getElement());
+                Dom.text("span", "gcash-qr__caption", "Scan with GCash, Maya or any InstaPay QR Ph bank app"), saveQr.getElement());
     }
 
     private static HTMLElement summaryRow(String label, String value) {

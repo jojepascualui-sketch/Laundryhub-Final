@@ -241,14 +241,13 @@ public final class AdminPricingPage extends Page {
     private void drawQr() {
         Dom.clear(qrBox);
         qrBox.appendChild(Dom.text("span", "field__label", "GCash QR Ph code"));
-        if (qrPath != null) {
-            HTMLElement img = Dom.el("img", "qr-admin__img");
-            img.setAttribute("src", ctx.getCatalog().gcashQrUrl(qrPath));
-            img.setAttribute("alt", "Shop GCash QR Ph code");
-            qrBox.appendChild(img);
-        } else {
-            qrBox.appendChild(Dom.text("span", "muted", "No QR yet. Customers only see the GCash number."));
-        }
+        HTMLElement img = Dom.el("img", "qr-admin__img");
+        img.setAttribute("src", qrPath != null ? ctx.getCatalog().gcashQrUrl(qrPath) : ShopSettings.BUILT_IN_GCASH_QR);
+        img.setAttribute("alt", "Shop GCash QR Ph code");
+        qrBox.appendChild(img);
+        qrBox.appendChild(Dom.text("span", "muted", qrPath != null
+                ? "Customers see this uploaded QR."
+                : "Customers see the QR built into the website. Upload another one to replace it."));
         if (!canEdit) {
             return;
         }
@@ -257,12 +256,12 @@ public final class AdminPricingPage extends Page {
         HTMLInputElement file = Dom.input("file", "file-input");
         file.setAttribute("accept", "image/png,image/jpeg,image/webp");
         file.setAttribute("aria-label", "GCash QR image");
-        Button upload = new Button(qrPath == null ? "Upload QR" : "Replace QR", Button.Variant.OUTLINE, null);
+        Button upload = new Button("Upload new QR", Button.Variant.OUTLINE, null);
         upload.getElement().getClassList().add("btn--small");
         upload.setOnClick(() -> uploadQr(file, upload));
         HTMLElement actions = Dom.div("row row--wrap", file, upload.getElement());
         if (qrPath != null) {
-            Button remove = new Button("Remove QR", Button.Variant.LINK, null);
+            Button remove = new Button("Use built-in QR", Button.Variant.LINK, null);
             remove.getElement().getClassList().add("btn--danger-link");
             remove.setOnClick(() -> removeQr(remove));
             actions.appendChild(remove.getElement());
@@ -310,7 +309,7 @@ public final class AdminPricingPage extends Page {
             public void onSuccess(Void result) {
                 qrPath = null;
                 ctx.getCatalogCache().invalidate();
-                Toast.success("GCash QR removed.");
+                Toast.success("Customers now see the built-in GCash QR.");
                 drawQr();
             }
 

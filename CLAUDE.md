@@ -37,6 +37,7 @@ Development is VS Code on Windows. The build guide is `Laundry_HUB_Web_Java_Supa
      QR Ph (0015): ADMIN uploads the shop's GCash QR image in Pricing & soaps (bucket `shop-public`,
      path in `shop_settings.gcash_qr_path`, saved right away, not by "Save changes"); step 4 shows it
      with "Save QR". The QR is the shop's own static GCash QR; the customer types the amount.
+     Without an upload, the built-in QR `src/main/webapp/img/gcash-qr.jpg` (`ShopSettings.BUILT_IN_GCASH_QR`) is shown.
    - Roles: `CUSTOMER`, `RIDER`, `ADMIN`, `STAFF`.
    - Order statuses: `PENDING`, `WASHING`, `READY`, `OUT_FOR_DELIVERY`, `COMPLETED`, `CANCELLED`.
    - Each delivery order creates a `PICKUP` and a `RETURN_DELIVERY` rider job that on-duty riders

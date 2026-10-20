@@ -8,6 +8,8 @@ import com.laundryhub.exception.ValidationException;
  */
 public final class ShopSettings {
 
+    /** The shop's GCash InstaPay (QR Ph) code that ships with the website. */
+    public static final String BUILT_IN_GCASH_QR = "img/gcash-qr.jpg";
     /** Default price per kg: ₱20 (The Laundry Hub Iloilo; the design's sample was ₱30). */
     public static final long DEFAULT_RATE_PER_KG = 2000;
     /** Default minimum load. */
