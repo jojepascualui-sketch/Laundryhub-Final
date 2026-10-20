@@ -18,6 +18,7 @@ import com.laundryhub.service.CatalogCache;
 import com.laundryhub.service.OrderDraft;
 import com.laundryhub.service.PriceCalculator;
 import com.laundryhub.ui.BottomBar;
+import com.laundryhub.ui.Browser;
 import com.laundryhub.ui.Button;
 import com.laundryhub.ui.Chip;
 import com.laundryhub.ui.CustomerShell;
@@ -56,6 +57,11 @@ public final class OrderWizardPage extends Page {
     /** Soap tile tints from the design, used in order. */
     private static final String[] SOAP_TINTS = {"#E4EEF8", "#E6F2EA", "#F3E8F7", "#FFF1E8"};
     private static final int MAX_KG = 100;
+    /** How to pay with GCash Send Money (the shop checks the reference number). */
+    private static final String[] GCASH_STEPS = {
+        "Open GCash → Send Money → Express Send.",
+        "Paste our number and send the exact amount.",
+        "Copy the 13-digit reference number from the receipt and enter it below."};
 
     private final AppContext ctx;
     private final int step;
@@ -380,8 +386,24 @@ public final class OrderWizardPage extends Page {
         sendTo.appendChild(Dom.div("gcash-card__head", Dom.text("span", null, "Send "), amount,
                 Dom.text("span", null, " to our GCash, then enter the reference number below.")));
         if (Validators.hasText(s.getGcashNumber())) {
-            sendTo.appendChild(summaryRow("GCash number", TextUtils.formatMobile(s.getGcashNumber())));
-            sendTo.appendChild(summaryRow("Account name", TextUtils.orEmpty(s.getGcashAccountName())));
+            String shopNumber = Validators.compact(s.getGcashNumber());
+            HTMLElement copy = Dom.text("button", "gcash-card__copy", "Copy");
+            copy.setAttribute("type", "button");
+            copy.setAttribute("aria-label", "Copy GCash number");
+            Dom.onClick(copy, () -> {
+                Browser.copyText(shopNumber);
+                Toast.success("GCash number copied. Paste it in GCash → Send Money.");
+            });
+            sendTo.appendChild(Dom.div("summary-row", Dom.text("span", "summary-row__label", "GCash number"),
+                    Dom.div("gcash-card__number", Dom.text("span", "summary-row__value", TextUtils.formatMobile(shopNumber)), copy)));
+            if (Validators.hasText(s.getGcashAccountName())) {
+                sendTo.appendChild(summaryRow("Account name", s.getGcashAccountName()));
+            }
+            HTMLElement steps = Dom.el("ol", "gcash-card__steps");
+            for (String step : GCASH_STEPS) {
+                steps.appendChild(Dom.text("li", null, step));
+            }
+            sendTo.appendChild(steps);
         } else {
             sendTo.appendChild(Dom.text("div", "note note--warn",
                     "The shop has not added its GCash number yet. Please choose Cash or ask the shop."));

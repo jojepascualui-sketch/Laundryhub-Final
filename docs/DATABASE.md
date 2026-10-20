@@ -17,13 +17,14 @@ All SQL is in `supabase/migrations/`. Run the files **in order**.
 | `0011_rider_login_email.sql` | Lets riders sign in with their mobile number (Rider tab) |
 | `0012_iloilo_shop_and_price.sql` | The Laundry Hub Iloilo location (PHJ6+X5C) and ₱20 per kg |
 | `0013_cancellations.sql` | `cancel_order` (customer) and `release_job` (rider), `orders.cancel_reason` / `cancelled_at` |
+| `0014_shop_gcash_number.sql` | Shop GCash number 0924 285 0309 (customers send payment here) |
 
 ## How to run the files
 
 ### Option A: SQL Editor (no installs)
 1. Supabase dashboard → **SQL Editor** → **New query**.
 2. Open `0001_types.sql` in VS Code, copy everything, paste, click **Run**. It should say *Success. No rows returned*.
-3. Repeat for `0002` … `0009` in order, then `0011`, `0012`, `0013` (and `0010` if you want sample data).
+3. Repeat for `0002` … `0009` in order, then `0011`, `0012`, `0013`, `0014` (and `0010` if you want sample data).
 
 If a file fails halfway, fix the cause and run **that file** again. To start over completely,
 run this first (it deletes all Laundry HUB data):

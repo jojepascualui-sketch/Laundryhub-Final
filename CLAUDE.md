@@ -32,7 +32,8 @@ Development is VS Code on Windows. The build guide is `Laundry_HUB_Web_Java_Supa
    - Soaps (add-on per kg): Standard +₱0 ("Included"), Hypoallergenic +₱5, Premium Scented +₱8, Baby-Safe +₱6.
    - Price = kg × rate (₱20 at The Laundry Hub Iloilo; design sample ₱30) + kg × soap add-on + delivery fee (₱60, delivery only).
    - Shop: The Laundry Hub Iloilo, Cubay, Jaro, Iloilo City (plus code PHJ6+X5C = 10.732437, 122.560391), see migration 0012.
-   - Payment: **Cash** or **GCash** (manual 13-digit reference number; admin verifies).
+   - Payment: **Cash** or **GCash** (manual 13-digit reference number; admin verifies). Shop GCash
+     number 0924 285 0309 (migration 0014); step 4 has a Copy button and Send Money steps.
    - Roles: `CUSTOMER`, `RIDER`, `ADMIN`, `STAFF`.
    - Order statuses: `PENDING`, `WASHING`, `READY`, `OUT_FOR_DELIVERY`, `COMPLETED`, `CANCELLED`.
    - Each delivery order creates a `PICKUP` and a `RETURN_DELIVERY` rider job that on-duty riders
@@ -134,7 +135,7 @@ and generates `web-dist/config.js`. `index.html` calls the exported `main()` on 
 
 ## Database (see docs/DATABASE.md)
 
-- Migrations `supabase/migrations/0001…0013` (0010 = optional sample data). Never edit an
+- Migrations `supabase/migrations/0001…0014` (0010 = optional sample data). Never edit an
   applied file; add a new numbered file instead.
 - Role helper is `current_app_role()` (`current_role` is a Postgres keyword).
 - Orders are created only via `rpc place_order`; jobs move only via `accept_job` /

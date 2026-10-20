@@ -550,6 +550,15 @@ button:disabled { cursor: not-allowed; }
 
 .gcash-card { gap: 10px; }
 .gcash-card__head { font-size: 14px; line-height: 1.4; }
+.gcash-card__number { display: flex; align-items: center; gap: 10px; }
+.gcash-card__copy {
+  min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill);
+  border: 1.5px solid var(--accent); background: var(--surface); color: var(--accent);
+  font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.gcash-card__copy:hover { background: var(--accent-selected-bg); }
+.gcash-card__copy:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.gcash-card__steps { margin: 2px 0 0; padding-left: 20px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .file-input { font-size: 14px; padding: 6px 0; color: var(--muted); }
 .file-input::file-selector-button {
   min-height: 40px; margin-right: 12px; padding: 0 16px; border-radius: var(--radius-pill);

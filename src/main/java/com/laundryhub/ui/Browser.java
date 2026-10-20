@@ -43,6 +43,18 @@ public final class Browser {
     public static native void download(String fileName, String content, String mimeType);
 
     /**
+     * Copies text to the clipboard (falls back to a hidden text box on older browsers).
+     *
+     * @param text text to copy, e.g. the shop's GCash number
+     */
+    @JSBody(params = "text", script = ""
+            + "if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text); return; }"
+            + "var lhArea = document.createElement('textarea'); lhArea.value = text;"
+            + "lhArea.style.position = 'fixed'; lhArea.style.opacity = '0'; document.body.appendChild(lhArea);"
+            + "lhArea.select(); try { document.execCommand('copy'); } catch (lhErr) { } lhArea.remove();")
+    public static native void copyText(String text);
+
+    /**
      * @param url page to open in a new tab (e.g. Google Maps directions)
      */
     public static void openNewTab(String url) {
