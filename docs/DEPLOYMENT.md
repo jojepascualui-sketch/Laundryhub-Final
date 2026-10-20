@@ -65,6 +65,16 @@ vercel project protection disable laundry-hub --sso
 `laundryhub-final.vercel.app`, set with `vercel alias set <deployment-url> laundryhub-final.vercel.app`.
 It is attached to the project, so every `--prod` deploy updates it.)
 
+## Do NOT connect the GitHub repo in Vercel
+
+Vercel's build machines have no Java, so a Vercel "Git" build of this repo publishes an empty site
+(`NOT_FOUND` on every page). The project's Git integration is disconnected (`vercel git disconnect`) and the
+root `vercel.json` sets `"git": { "deploymentEnabled": false }` as a safety net. Deploy with
+`build-and-deploy.cmd`, or let GitHub Actions build with Java and upload `web-dist` (see below).
+
+If it ever happens: `vercel promote <last good deployment URL>` (from `vercel ls laundry-hub`) brings the
+site back in seconds.
+
 ## After the first deploy: allow the new address
 
 Replace `YOUR-APP` with your real address.
