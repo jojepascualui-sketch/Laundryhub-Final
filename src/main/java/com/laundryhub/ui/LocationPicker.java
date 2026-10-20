@@ -26,9 +26,9 @@ public class LocationPicker extends Component {
     private static final int STREET_ZOOM = 17;
     /** Zoom showing the neighbourhood. */
     private static final int AREA_ZOOM = 15;
-    /** Fallback center when the shop has no pin: Manila. */
-    private static final double DEFAULT_LAT = 14.5995;
-    private static final double DEFAULT_LNG = 120.9842;
+    /** Fallback center when the shop has no pin: The Laundry Hub Iloilo (Cubay, Jaro). */
+    private static final double DEFAULT_LAT = 10.732437;
+    private static final double DEFAULT_LNG = 122.560391;
     /** Wait after typing before searching. */
     private static final int SEARCH_DELAY_MILLIS = 450;
     private static final int MIN_SEARCH_CHARS = 3;

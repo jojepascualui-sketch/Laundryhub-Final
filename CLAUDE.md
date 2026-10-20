@@ -30,7 +30,8 @@ Development is VS Code on Windows. The build guide is `Laundry_HUB_Web_Java_Supa
    - Service: **Walk-in** or **Pickup & Delivery**.
    - **Minimum 8 kg** (below 8 kg is charged as 8 kg).
    - Soaps (add-on per kg): Standard +₱0 ("Included"), Hypoallergenic +₱5, Premium Scented +₱8, Baby-Safe +₱6.
-   - Price = kg × rate (default ₱30) + kg × soap add-on + delivery fee (₱60, delivery only).
+   - Price = kg × rate (₱20 at The Laundry Hub Iloilo; design sample ₱30) + kg × soap add-on + delivery fee (₱60, delivery only).
+   - Shop: The Laundry Hub Iloilo, Cubay, Jaro, Iloilo City (plus code PHJ6+X5C = 10.732437, 122.560391), see migration 0012.
    - Payment: **Cash** or **GCash** (manual 13-digit reference number; admin verifies).
    - Roles: `CUSTOMER`, `RIDER`, `ADMIN`, `STAFF`.
    - Order statuses: `PENDING`, `WASHING`, `READY`, `OUT_FOR_DELIVERY`, `COMPLETED`, `CANCELLED`.

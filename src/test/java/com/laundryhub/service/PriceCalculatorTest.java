@@ -20,7 +20,10 @@ class PriceCalculatorTest {
     private static final Soap PREMIUM = new Soap(3, "Premium Scented", "", 800, true);
     private static final Soap BABY_SAFE = new Soap(4, "Baby-Safe", "", 600, true);
 
-    private final PriceCalculator calc = new PriceCalculator(ShopSettings.defaults());
+    /** The build guide's examples use ₱30 per kg. */
+    private static final ShopSettings GUIDE = new ShopSettings(3000, 8, 6000, 5, null, "", null, null, true, true);
+
+    private final PriceCalculator calc = new PriceCalculator(GUIDE);
 
     @Test
     void tenKgHypoallergenicDeliveryIs410() {
@@ -68,6 +71,14 @@ class PriceCalculatorTest {
     void estimateWithoutSoapUsesMinimumAndFee() {
         assertEquals(24000 + 6000, calc.estimateTotal(PickupDeliveryService.INSTANCE, null, 6));
         assertEquals(24000, calc.estimateTotal(null, null, 8));
+    }
+
+    @Test
+    void iloiloPriceTwentyPerKilo() {
+        PriceCalculator iloilo = new PriceCalculator(ShopSettings.defaults());
+        assertEquals("₱200.00", MoneyFormatter.format(iloilo.quote(WalkInService.INSTANCE, new LaundryLoad(10, STANDARD)).getTotal()));
+        assertEquals("₱310.00", MoneyFormatter.format(iloilo.quote(PickupDeliveryService.INSTANCE, new LaundryLoad(10, HYPOALLERGENIC)).getTotal()));
+        assertEquals("₱160.00", MoneyFormatter.format(iloilo.quote(WalkInService.INSTANCE, new LaundryLoad(7, STANDARD)).getTotal()));
     }
 
     @Test

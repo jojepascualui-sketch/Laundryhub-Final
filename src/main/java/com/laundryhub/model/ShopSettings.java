@@ -8,8 +8,8 @@ import com.laundryhub.exception.ValidationException;
  */
 public final class ShopSettings {
 
-    /** Default price per kg: ₱30. */
-    public static final long DEFAULT_RATE_PER_KG = 3000;
+    /** Default price per kg: ₱20 (The Laundry Hub Iloilo; the design's sample was ₱30). */
+    public static final long DEFAULT_RATE_PER_KG = 2000;
     /** Default minimum load. */
     public static final int DEFAULT_MIN_KG = 8;
     /** Default delivery fee: ₱60. */
@@ -67,7 +67,7 @@ public final class ShopSettings {
         this.gcashEnabled = gcashEnabled;
     }
 
-    /** @return the defaults from the design (₱30/kg, 8 kg, ₱60, 5 km) */
+    /** @return the shop defaults (₱20/kg, 8 kg, ₱60, 5 km) */
     public static ShopSettings defaults() {
         return new ShopSettings(DEFAULT_RATE_PER_KG, DEFAULT_MIN_KG, DEFAULT_DELIVERY_FEE, DEFAULT_RADIUS_KM,
                 null, "", null, null, true, true);
