@@ -129,6 +129,19 @@ class OrderDraftTest {
             @Override
             public void saveSoap(Soap soap, Callback<Soap> callback) {
             }
+
+            @Override
+            public void uploadGcashQr(Object browserFile, String contentType, Callback<String> callback) {
+            }
+
+            @Override
+            public void removeGcashQr(Callback<Void> callback) {
+            }
+
+            @Override
+            public String gcashQrUrl(String path) {
+                return path;
+            }
         };
         CatalogCache cache = new CatalogCache(repo);
         CatalogCache.Catalog[] got = new CatalogCache.Catalog[2];

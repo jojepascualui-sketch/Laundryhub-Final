@@ -20,6 +20,24 @@ public interface CatalogRepository {
      */
     void saveSettings(ShopSettings settings, Callback<Void> callback);
 
+    /**
+     * Uploads the shop's GCash QR Ph image and saves its path in shop_settings (ADMIN only).
+     *
+     * @param browserFile image File from an input element
+     * @param contentType e.g. image/png
+     * @param callback    receives the new storage path
+     */
+    void uploadGcashQr(Object browserFile, String contentType, Callback<String> callback);
+
+    /** @param callback called when the QR was removed from the shop settings (ADMIN only) */
+    void removeGcashQr(Callback<Void> callback);
+
+    /**
+     * @param path storage path from {@link ShopSettings#getGcashQrPath()}
+     * @return public image address
+     */
+    String gcashQrUrl(String path);
+
     /** @param callback receives soaps customers can choose, in display order */
     void findAvailableSoaps(Callback<List<Soap>> callback);
 

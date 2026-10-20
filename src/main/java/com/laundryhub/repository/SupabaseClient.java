@@ -463,6 +463,15 @@ public class SupabaseClient {
     }
 
     /**
+     * @param bucket public bucket name
+     * @param path   object path
+     * @return the file's permanent public address
+     */
+    public String publicUrl(String bucket, String path) {
+        return baseUrl + "/storage/v1/object/public/" + bucket + "/" + path;
+    }
+
+    /**
      * Creates a temporary link to a private file (e.g. a GCash screenshot for the admin).
      *
      * @param bucket    bucket name

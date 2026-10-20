@@ -8,6 +8,7 @@ import com.laundryhub.model.Role;
 import com.laundryhub.model.ShopSettings;
 import com.laundryhub.model.Soap;
 import com.laundryhub.ui.AdminShell;
+import com.laundryhub.ui.Browser;
 import com.laundryhub.ui.Button;
 import com.laundryhub.ui.Checkbox;
 import com.laundryhub.ui.Dom;
@@ -35,6 +36,9 @@ import org.teavm.jso.dom.html.HTMLInputElement;
  */
 public final class AdminPricingPage extends Page {
 
+    /** Largest QR picture accepted (the storage bucket allows 5 MB). */
+    private static final double MAX_QR_BYTES = 5 * 1024 * 1024;
+
     private final AppContext ctx;
     private ShopSettings settings;
     private List<Soap> soaps = new ArrayList<>();
@@ -50,6 +54,8 @@ public final class AdminPricingPage extends Page {
     private Checkbox gcash;
     private TextInput gcashNumber;
     private TextInput gcashName;
+    private String qrPath;
+    private HTMLElement qrBox;
     private TextInput address;
     private TextInput hours;
     private TextInput lat;
@@ -224,8 +230,96 @@ public final class AdminPricingPage extends Page {
         gcashNumber.setValue(TextUtils.formatMobile(settings.getGcashNumber()));
         gcashName = new TextInput("GCash account name", "Name shown in GCash", "text", null);
         gcashName.setValue(TextUtils.orEmpty(settings.getGcashAccountName()));
+        qrPath = settings.getGcashQrPath();
+        qrBox = Dom.div("qr-admin");
+        drawQr();
         return Dom.div("card admin-card", Dom.text("h2", "card__title", "Payment methods"),
-                cash.getElement(), gcash.getElement(), gcashNumber.getElement(), gcashName.getElement());
+                cash.getElement(), gcash.getElement(), gcashNumber.getElement(), gcashName.getElement(), qrBox);
+    }
+
+    /** GCash QR Ph: preview, upload and remove (uploads right away, separate from "Save changes"). */
+    private void drawQr() {
+        Dom.clear(qrBox);
+        qrBox.appendChild(Dom.text("span", "field__label", "GCash QR Ph code"));
+        if (qrPath != null) {
+            HTMLElement img = Dom.el("img", "qr-admin__img");
+            img.setAttribute("src", ctx.getCatalog().gcashQrUrl(qrPath));
+            img.setAttribute("alt", "Shop GCash QR Ph code");
+            qrBox.appendChild(img);
+        } else {
+            qrBox.appendChild(Dom.text("span", "muted", "No QR yet. Customers only see the GCash number."));
+        }
+        if (!canEdit) {
+            return;
+        }
+        qrBox.appendChild(Dom.text("span", "muted",
+                "In GCash tap Receive → QR → Save QR (or download it from GCash for Business), then upload the picture here."));
+        HTMLInputElement file = Dom.input("file", "file-input");
+        file.setAttribute("accept", "image/png,image/jpeg,image/webp");
+        file.setAttribute("aria-label", "GCash QR image");
+        Button upload = new Button(qrPath == null ? "Upload QR" : "Replace QR", Button.Variant.OUTLINE, null);
+        upload.getElement().getClassList().add("btn--small");
+        upload.setOnClick(() -> uploadQr(file, upload));
+        HTMLElement actions = Dom.div("row row--wrap", file, upload.getElement());
+        if (qrPath != null) {
+            Button remove = new Button("Remove QR", Button.Variant.LINK, null);
+            remove.getElement().getClassList().add("btn--danger-link");
+            remove.setOnClick(() -> removeQr(remove));
+            actions.appendChild(remove.getElement());
+        }
+        qrBox.appendChild(actions);
+    }
+
+    private void uploadQr(HTMLInputElement input, Button button) {
+        Object file = Browser.selectedFile(input);
+        if (file == null) {
+            Toast.error("Choose the QR picture first.");
+            return;
+        }
+        String type = Browser.fileType(file);
+        if (!type.equals("image/png") && !type.equals("image/jpeg") && !type.equals("image/webp")) {
+            Toast.error("The QR must be a PNG, JPG or WebP picture.");
+            return;
+        }
+        if (Browser.fileSize(file) > MAX_QR_BYTES) {
+            Toast.error("The QR picture must be smaller than 5 MB.");
+            return;
+        }
+        button.setLoading(true);
+        ctx.getCatalog().uploadGcashQr(file, type, new Callback<String>() {
+            @Override
+            public void onSuccess(String path) {
+                qrPath = path;
+                ctx.getCatalogCache().invalidate();
+                Toast.success("GCash QR saved. Customers see it when they pay with GCash.");
+                drawQr();
+            }
+
+            @Override
+            public void onError(ApiException error) {
+                button.setLoading(false);
+                Toast.error(error.getMessage());
+            }
+        });
+    }
+
+    private void removeQr(Button button) {
+        button.setLoading(true);
+        ctx.getCatalog().removeGcashQr(new Callback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                qrPath = null;
+                ctx.getCatalogCache().invalidate();
+                Toast.success("GCash QR removed.");
+                drawQr();
+            }
+
+            @Override
+            public void onError(ApiException error) {
+                button.setLoading(false);
+                Toast.error(error.getMessage());
+            }
+        });
     }
 
     private HTMLElement shopCard() {
@@ -359,7 +453,8 @@ public final class AdminPricingPage extends Page {
         Location shop = new Location(parse(lat.getValue(), "Shop latitude"), parse(lng.getValue(), "Shop longitude"),
                 address.getValue());
         return new ShopSettings(ratePerKg, min, deliveryFee, radiusKm, shop, hours.getValue(),
-                Validators.hasText(number) ? number : null, gcashName.getValue().trim(), cash.isChecked(), gcash.isChecked());
+                Validators.hasText(number) ? number : null, gcashName.getValue().trim(), cash.isChecked(), gcash.isChecked(),
+                qrPath);
     }
 
     private List<Soap> readSoaps() {

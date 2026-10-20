@@ -27,6 +27,7 @@ public final class ShopSettings {
     private final String gcashAccountName;
     private final boolean cashEnabled;
     private final boolean gcashEnabled;
+    private final String gcashQrPath;
 
     /**
      * @param ratePerKg        price per kg in centavos (&gt; 0)
@@ -43,6 +44,28 @@ public final class ShopSettings {
     public ShopSettings(long ratePerKg, int minKg, long deliveryFee, double deliveryRadiusKm,
                         Location shopLocation, String shopHours, String gcashNumber,
                         String gcashAccountName, boolean cashEnabled, boolean gcashEnabled) {
+        this(ratePerKg, minKg, deliveryFee, deliveryRadiusKm, shopLocation, shopHours, gcashNumber,
+                gcashAccountName, cashEnabled, gcashEnabled, null);
+    }
+
+    /**
+     * Same as the 10-argument constructor, plus the shop's GCash QR Ph image.
+     *
+     * @param ratePerKg        price per kg in centavos (&gt; 0)
+     * @param minKg            minimum charged kg (&gt; 0)
+     * @param deliveryFee      delivery fee in centavos (&ge; 0)
+     * @param deliveryRadiusKm delivery radius in km (&gt; 0)
+     * @param shopLocation     shop pin and address, may be null
+     * @param shopHours        opening hours text
+     * @param gcashNumber      shop GCash number, may be null
+     * @param gcashAccountName GCash account name, may be null
+     * @param cashEnabled      cash accepted
+     * @param gcashEnabled     GCash accepted
+     * @param gcashQrPath      storage path of the QR Ph image (bucket shop-public), may be null
+     */
+    public ShopSettings(long ratePerKg, int minKg, long deliveryFee, double deliveryRadiusKm,
+                        Location shopLocation, String shopHours, String gcashNumber,
+                        String gcashAccountName, boolean cashEnabled, boolean gcashEnabled, String gcashQrPath) {
         if (ratePerKg <= 0) {
             throw new ValidationException("Price per kilo must be more than zero.");
         }
@@ -65,6 +88,7 @@ public final class ShopSettings {
         this.gcashAccountName = gcashAccountName;
         this.cashEnabled = cashEnabled;
         this.gcashEnabled = gcashEnabled;
+        this.gcashQrPath = gcashQrPath == null || gcashQrPath.trim().isEmpty() ? null : gcashQrPath;
     }
 
     /** @return the shop defaults (₱20/kg, 8 kg, ₱60, 5 km) */
@@ -121,6 +145,11 @@ public final class ShopSettings {
     /** @return true when cash is accepted */
     public boolean isCashEnabled() {
         return cashEnabled;
+    }
+
+    /** @return storage path of the GCash QR Ph image, or null when none was uploaded */
+    public String getGcashQrPath() {
+        return gcashQrPath;
     }
 
     /** @return true when GCash is accepted */

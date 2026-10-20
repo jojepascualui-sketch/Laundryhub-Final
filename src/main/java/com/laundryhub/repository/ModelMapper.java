@@ -63,7 +63,8 @@ public final class ModelMapper {
                 row.getString("gcash_number"),
                 row.getString("gcash_account_name"),
                 row.getBoolean("cash_enabled", true),
-                row.getBoolean("gcash_enabled", true));
+                row.getBoolean("gcash_enabled", true),
+                row.getString("gcash_qr_path"));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.laundryhub.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -73,6 +74,11 @@ class ModelMapperTest {
         JsonObject back = ModelMapper.fromSettings(s);
         assertEquals(30.0, back.getDouble("rate_per_kg", 0));
         assertEquals(14.5896, back.getDouble("shop_lat", 0));
+        assertEquals(null, s.getGcashQrPath());
+        assertFalse(back.has("gcash_qr_path"), "the QR is saved by its own upload, not by Save changes");
+        ShopSettings withQr = ModelMapper.toSettings(Json.parseObject("{\"rate_per_kg\":20,\"gcash_number\":\"09242850309\","
+                + "\"gcash_qr_path\":\"gcash-qr-1.png\"}"));
+        assertEquals("gcash-qr-1.png", withQr.getGcashQrPath());
     }
 
     @Test

@@ -18,6 +18,7 @@ import java.util.List;
 public final class SupabaseCatalogRepository implements CatalogRepository {
 
     private static final int SETTINGS_ROW_ID = 1;
+    private static final String PUBLIC_BUCKET = "shop-public";
 
     private final SupabaseClient client;
 
@@ -47,6 +48,53 @@ public final class SupabaseCatalogRepository implements CatalogRepository {
                     public void onSuccess(JsonArray rows) {
                         if (rows.isEmpty()) {
                             onError(new ApiException(403, "", "Only the admin can change prices."));
+                        } else {
+                            callback.onSuccess(null);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ApiException error) {
+                        callback.onError(error);
+                    }
+                });
+    }
+
+    @Override
+    public void uploadGcashQr(Object browserFile, String contentType, Callback<String> callback) {
+        String ext = contentType.endsWith("png") ? "png" : contentType.endsWith("webp") ? "webp" : "jpg";
+        // A new name each time, so phones never show an old cached QR.
+        String path = "gcash-qr-" + System.currentTimeMillis() + "." + ext;
+        client.upload(PUBLIC_BUCKET, path, browserFile, contentType, new Callback<String>() {
+            @Override
+            public void onSuccess(String saved) {
+                setQrPath(saved, Callbacks.map(callback, ignored -> saved));
+            }
+
+            @Override
+            public void onError(ApiException error) {
+                callback.onError(error);
+            }
+        });
+    }
+
+    @Override
+    public void removeGcashQr(Callback<Void> callback) {
+        setQrPath(null, callback);
+    }
+
+    @Override
+    public String gcashQrUrl(String path) {
+        return client.publicUrl(PUBLIC_BUCKET, path);
+    }
+
+    private void setQrPath(String path, Callback<Void> callback) {
+        client.update("shop_settings", Query.filter().eq("id", SETTINGS_ROW_ID), new JsonObject().put("gcash_qr_path", path),
+                new Callback<JsonArray>() {
+                    @Override
+                    public void onSuccess(JsonArray rows) {
+                        if (rows.isEmpty()) {
+                            onError(new ApiException(403, "", "Only the admin can change the GCash QR."));
                         } else {
                             callback.onSuccess(null);
                         }

@@ -41,8 +41,6 @@ import com.laundryhub.web.AppContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.teavm.jso.JSBody;
-import org.teavm.jso.JSObject;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLInputElement;
 
@@ -57,6 +55,13 @@ public final class OrderWizardPage extends Page {
     /** Soap tile tints from the design, used in order. */
     private static final String[] SOAP_TINTS = {"#E4EEF8", "#E6F2EA", "#F3E8F7", "#FFF1E8"};
     private static final int MAX_KG = 100;
+    /** Shown size of the QR image in px. */
+    private static final int QR_SIZE = 220;
+    /** How to pay with the QR Ph code. */
+    private static final String[] GCASH_QR_STEPS = {
+        "Open GCash → Pay QR and scan the code (on this phone: Save QR, then Upload QR).",
+        "Or use Send Money to our GCash number.",
+        "Pay the exact amount, then enter the 13-digit reference number below."};
     /** How to pay with GCash Send Money (the shop checks the reference number). */
     private static final String[] GCASH_STEPS = {
         "Open GCash → Send Money → Express Send.",
@@ -386,6 +391,9 @@ public final class OrderWizardPage extends Page {
         sendTo.appendChild(Dom.div("gcash-card__head", Dom.text("span", null, "Send "), amount,
                 Dom.text("span", null, " to our GCash, then enter the reference number below.")));
         if (Validators.hasText(s.getGcashNumber())) {
+            if (s.getGcashQrPath() != null) {
+                sendTo.appendChild(qrBlock(ctx.getCatalog().gcashQrUrl(s.getGcashQrPath())));
+            }
             String shopNumber = Validators.compact(s.getGcashNumber());
             HTMLElement copy = Dom.text("button", "gcash-card__copy", "Copy");
             copy.setAttribute("type", "button");
@@ -400,7 +408,7 @@ public final class OrderWizardPage extends Page {
                 sendTo.appendChild(summaryRow("Account name", s.getGcashAccountName()));
             }
             HTMLElement steps = Dom.el("ol", "gcash-card__steps");
-            for (String step : GCASH_STEPS) {
+            for (String step : s.getGcashQrPath() != null ? GCASH_QR_STEPS : GCASH_STEPS) {
                 steps.appendChild(Dom.text("li", null, step));
             }
             sendTo.appendChild(steps);
@@ -443,6 +451,23 @@ public final class OrderWizardPage extends Page {
 
         Dom.append(panel, number.getElement(), reference.getElement(), proof);
         return panel;
+    }
+
+    /** The shop's QR Ph code with a "Save QR" button (to upload it in GCash on the same phone). */
+    private static HTMLElement qrBlock(String url) {
+        HTMLElement img = Dom.el("img", "gcash-qr__img");
+        img.setAttribute("src", url);
+        img.setAttribute("alt", "GCash QR Ph code of The Laundry Hub Iloilo");
+        img.setAttribute("width", String.valueOf(QR_SIZE));
+        img.setAttribute("height", String.valueOf(QR_SIZE));
+        img.setAttribute("loading", "lazy");
+        Button saveQr = new Button("Save QR", Button.Variant.OUTLINE, () -> {
+            Browser.saveFile(url, "laundryhub-gcash-qr.png");
+            Toast.success("QR saved. In GCash tap Pay QR → Upload QR.");
+        });
+        saveQr.getElement().getClassList().add("btn--small");
+        return Dom.div("gcash-qr", Dom.text("span", "gcash-qr__badge", "QR Ph"), img,
+                Dom.text("span", "gcash-qr__caption", "Scan with GCash or any QR Ph bank app"), saveQr.getElement());
     }
 
     private static HTMLElement summaryRow(String label, String value) {
@@ -550,7 +575,7 @@ public final class OrderWizardPage extends Page {
         }
         setBusy(true);
         notice.setHidden(true);
-        Object proofFile = selectedFile(proofInput);
+        Object proofFile = Browser.selectedFile(proofInput);
         ctx.getOrders().placeOrder(request, new Callback<Order>() {
             @Override
             public void onSuccess(Order order) {
@@ -572,7 +597,7 @@ public final class OrderWizardPage extends Page {
 
     private void uploadProof(Order order, Object file) {
         String userId = ctx.getCurrentUser().getId();
-        ctx.getOrders().attachGcashProof(order, userId, file, fileType(file), new Callback<Void>() {
+        ctx.getOrders().attachGcashProof(order, userId, file, Browser.fileType(file), new Callback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 finish(order);
@@ -601,19 +626,5 @@ public final class OrderWizardPage extends Page {
     private void showNotice(String message) {
         notice.setTextContent(message);
         notice.setHidden(false);
-    }
-
-    @JSBody(params = "input", script = "return (input && input.files && input.files.length) ? input.files[0] : null;")
-    private static native JSObject selectedFileJs(HTMLInputElement input);
-
-    private static Object selectedFile(HTMLInputElement input) {
-        return input == null ? null : selectedFileJs(input);
-    }
-
-    @JSBody(params = "file", script = "return file.type || 'image/jpeg';")
-    private static native String fileTypeJs(JSObject file);
-
-    private static String fileType(Object file) {
-        return fileTypeJs((JSObject) file);
     }
 }

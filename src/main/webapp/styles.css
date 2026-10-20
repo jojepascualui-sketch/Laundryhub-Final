@@ -558,6 +558,18 @@ button:disabled { cursor: not-allowed; }
 }
 .gcash-card__copy:hover { background: var(--accent-selected-bg); }
 .gcash-card__copy:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.gcash-qr {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px; border: 1.5px dashed var(--border-strong); border-radius: var(--radius-tile); background: var(--surface);
+}
+.gcash-qr__badge {
+  font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--accent);
+  background: var(--accent-tint); border-radius: var(--radius-pill); padding: 3px 10px;
+}
+.gcash-qr__img { width: 220px; height: 220px; max-width: 100%; object-fit: contain; border-radius: 12px; background: #fff; }
+.gcash-qr__caption { font-size: 13px; color: var(--muted); text-align: center; }
+.qr-admin { display: flex; flex-direction: column; gap: 8px; }
+.qr-admin__img { width: 180px; height: 180px; object-fit: contain; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
 .gcash-card__steps { margin: 2px 0 0; padding-left: 20px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .file-input { font-size: 14px; padding: 6px 0; color: var(--muted); }
 .file-input::file-selector-button {

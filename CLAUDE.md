@@ -34,6 +34,9 @@ Development is VS Code on Windows. The build guide is `Laundry_HUB_Web_Java_Supa
    - Shop: The Laundry Hub Iloilo, Cubay, Jaro, Iloilo City (plus code PHJ6+X5C = 10.732437, 122.560391), see migration 0012.
    - Payment: **Cash** or **GCash** (manual 13-digit reference number; admin verifies). Shop GCash
      number 0924 285 0309 (migration 0014); step 4 has a Copy button and Send Money steps.
+     QR Ph (0015): ADMIN uploads the shop's GCash QR image in Pricing & soaps (bucket `shop-public`,
+     path in `shop_settings.gcash_qr_path`, saved right away, not by "Save changes"); step 4 shows it
+     with "Save QR". The QR is the shop's own static GCash QR; the customer types the amount.
    - Roles: `CUSTOMER`, `RIDER`, `ADMIN`, `STAFF`.
    - Order statuses: `PENDING`, `WASHING`, `READY`, `OUT_FOR_DELIVERY`, `COMPLETED`, `CANCELLED`.
    - Each delivery order creates a `PICKUP` and a `RETURN_DELIVERY` rider job that on-duty riders
@@ -135,7 +138,7 @@ and generates `web-dist/config.js`. `index.html` calls the exported `main()` on 
 
 ## Database (see docs/DATABASE.md)
 
-- Migrations `supabase/migrations/0001…0014` (0010 = optional sample data). Never edit an
+- Migrations `supabase/migrations/0001…0015` (0010 = optional sample data). Never edit an
   applied file; add a new numbered file instead.
 - Role helper is `current_app_role()` (`current_role` is a Postgres keyword).
 - Orders are created only via `rpc place_order`; jobs move only via `accept_job` /
