@@ -1,0 +1,170 @@
+[
+ {
+  "file": "screens/00a-sign-in.png",
+  "html": "prototype/00a-sign-in.html",
+  "component": "Auth",
+  "title": "Customer / Rider / Admin sign in",
+  "size": "phone",
+  "group": "Sign in & sign up"
+ },
+ {
+  "file": "screens/00b-sign-up.png",
+  "html": "prototype/00b-sign-up.html",
+  "component": "Signup",
+  "title": "Create account",
+  "size": "phone",
+  "group": "Sign in & sign up"
+ },
+ {
+  "file": "screens/00c-admin-sign-in.png",
+  "html": "prototype/00c-admin-sign-in.html",
+  "component": "AdminLogin",
+  "title": "Admin sign in",
+  "size": "phone",
+  "group": "Sign in & sign up"
+ },
+ {
+  "file": "screens/01-home.png",
+  "html": "prototype/01-home.html",
+  "component": "Main",
+  "title": "Home (start of interactive order flow)",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/02-choose-service.png",
+  "html": "prototype/02-choose-service.html",
+  "component": "Service",
+  "title": "Choose service",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/03-weight-and-soap.png",
+  "html": "prototype/03-weight-and-soap.html",
+  "component": "Load",
+  "title": "Weight & fabric soap",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/04a-pin-location-delivery.png",
+  "html": "prototype/04a-pin-location-delivery.html",
+  "component": "LocationDelivery",
+  "title": "Pin location (delivery)",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/04b-drop-off-walk-in.png",
+  "html": "prototype/04b-drop-off-walk-in.html",
+  "component": "LocationWalkin",
+  "title": "Drop-off schedule (walk-in)",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/05-review-and-pay.png",
+  "html": "prototype/05-review-and-pay.html",
+  "component": "Payment",
+  "title": "Review & pay",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/06-order-placed.png",
+  "html": "prototype/06-order-placed.html",
+  "component": "Confirmation",
+  "title": "Order placed",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/07-track-order.png",
+  "html": "prototype/07-track-order.html",
+  "component": "Tracking",
+  "title": "Track order (live GPS)",
+  "size": "phone",
+  "group": "Customer app"
+ },
+ {
+  "file": "screens/R1-rider-bookings.png",
+  "html": "prototype/R1-rider-bookings.html",
+  "component": "Rider",
+  "title": "Available bookings \u2014 accept / decline",
+  "size": "phone",
+  "group": "Rider app"
+ },
+ {
+  "file": "screens/R2-rider-pickup-job.png",
+  "html": "prototype/R2-rider-pickup-job.html",
+  "component": "RiderPickup",
+  "title": "Pickup job in progress",
+  "size": "phone",
+  "group": "Rider app"
+ },
+ {
+  "file": "screens/R3-rider-delivery-cash.png",
+  "html": "prototype/R3-rider-delivery-cash.html",
+  "component": "RiderDelivery",
+  "title": "Return delivery \u2014 collect cash",
+  "size": "phone",
+  "group": "Rider app"
+ },
+ {
+  "file": "screens/R4-rider-job-done.png",
+  "html": "prototype/R4-rider-job-done.html",
+  "component": "RiderDone",
+  "title": "Job completed",
+  "size": "phone",
+  "group": "Rider app"
+ },
+ {
+  "file": "screens/R5-rider-off-duty.png",
+  "html": "prototype/R5-rider-off-duty.html",
+  "component": "RiderOffDuty",
+  "title": "Off duty",
+  "size": "phone",
+  "group": "Rider app"
+ },
+ {
+  "file": "screens/A1-admin-dashboard.png",
+  "html": "prototype/A1-admin-dashboard.html",
+  "component": "AdminDashboard",
+  "title": "Admin dashboard",
+  "size": "desktop",
+  "group": "Admin console"
+ },
+ {
+  "file": "screens/A2-admin-orders.png",
+  "html": "prototype/A2-admin-orders.html",
+  "component": "AdminOrders",
+  "title": "Orders & status update",
+  "size": "desktop",
+  "group": "Admin console"
+ },
+ {
+  "file": "screens/A3-admin-pricing.png",
+  "html": "prototype/A3-admin-pricing.html",
+  "component": "AdminPricing",
+  "title": "Pricing & soaps",
+  "size": "desktop",
+  "group": "Admin console"
+ },
+ {
+  "file": "screens/A4-admin-users.png",
+  "html": "prototype/A4-admin-users.html",
+  "component": "AdminUsers",
+  "title": "Customers, riders & staff",
+  "size": "desktop",
+  "group": "Admin console"
+ },
+ {
+  "file": "screens/A5-admin-reports.png",
+  "html": "prototype/A5-admin-reports.html",
+  "component": "AdminReports",
+  "title": "Sales reports",
+  "size": "desktop",
+  "group": "Admin console"
+ }
+]

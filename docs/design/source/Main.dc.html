@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laundry HUB app</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E63A8}a:hover{color:#123F6E}
+button{font-family:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed}
+input{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; background: #F3F5F2; color: #14212B; font-family: 'DM Sans', system-ui, sans-serif; overflow: hidden; position: relative; box-sizing: border-box">
+
+<!-- ============ HOME ============ -->
+<sc-if value="{{isHome}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; display: flex; flex-direction: column; min-height: 0">
+<div style="flex: 1; overflow-y: auto; padding: 28px 22px 16px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 40px; height: 40px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="3"></rect><circle cx="12" cy="13" r="5"></circle><path d="M8 6h.01M11 6h2"></path></svg>
+</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.5px">Laundry HUB</span>
+</div>
+<button aria-label="Notifications" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5DBD6; background: #fff; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14212B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+</button>
+</div>
+
+<div>
+<div style="font-size: 15px; color: #4A5863">Magandang araw!</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1.1; letter-spacing: -0.8px; margin-top: 4px">Fresh clothes,<br>zero hassle.</div>
+</div>
+
+<div style="background: {{accent}}; color: #fff; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden">
+<svg width="160" height="160" viewBox="0 0 160 160" style="position: absolute; right: -40px; top: -40px; opacity: 0.18" aria-hidden="true"><circle cx="80" cy="80" r="70" fill="none" stroke="#fff" stroke-width="14"></circle><circle cx="80" cy="80" r="34" fill="none" stroke="#fff" stroke-width="8"></circle></svg>
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase">New order</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 700; line-height: 1.2">Walk-in or we pick it up for you</div>
+<button onClick="{{startOrder}}" style="align-self: flex-start; min-height: 46px; padding: 0 22px; border-radius: 23px; border: none; background: #fff; color: #14212B; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px">Start laundry order
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="background: #fff; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #4A5863">Wash · Dry · Fold</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700">{{rateLabel}}<span style="font-size: 14px; font-weight: 500; color: #4A5863"> /kg</span></span>
+</div>
+<div style="background: #FFF1E8; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #8A3A12">Minimum load</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700; color: #8A3A12">8 kg</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="font-weight: 700; font-size: 17px">How it works</div>
+<div style="display: flex; gap: 14px; align-items: center; background: #fff; border-radius: 16px; padding: 14px">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E4EEF8; color: {{accent}}; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">1</span>
+<span style="font-size: 14px">Choose walk-in or pickup &amp; delivery</span>
+</div>
+<div style="display: flex; gap: 14px; align-items: center; background: #fff; border-radius: 16px; padding: 14px">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E4EEF8; color: {{accent}}; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">2</span>
+<span style="font-size: 14px">Set the kilos and pick your fabric soap</span>
+</div>
+<div style="display: flex; gap: 14px; align-items: center; background: #fff; border-radius: 16px; padding: 14px">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E4EEF8; color: {{accent}}; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">3</span>
+<span style="font-size: 14px">Pin your location, pay with Cash or GCash</span>
+</div>
+</div>
+</div>
+
+<nav style="display: flex; justify-content: space-around; background: #fff; border-top: 1px solid #E1E6E2; padding: 8px 0 18px">
+<button style="min-width: 64px; min-height: 48px; border: none; background: none; color: {{accent}}; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 3px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Home</button>
+<button style="min-width: 64px; min-height: 48px; border: none; background: none; color: #4A5863; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg>Orders</button>
+<button style="min-width: 64px; min-height: 48px; border: none; background: none; color: #4A5863; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg>Profile</button>
+</nav>
+</div>
+</sc-if>
+
+<!-- ============ ORDER FLOW ============ -->
+<sc-if value="{{inFlow}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; min-height: 0">
+<header style="padding: 22px 22px 14px; display: flex; flex-direction: column; gap: 14px; background: #F3F5F2">
+<div style="display: flex; align-items: center; gap: 12px">
+<button onClick="{{back}}" aria-label="Back" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5DBD6; background: #fff; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14212B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+</button>
+<div style="flex: 1">
+<div style="font-size: 13px; color: #4A5863">Step {{step}} of 4</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; letter-spacing: -0.4px">{{stepTitle}}</div>
+</div>
+</div>
+<div style="height: 6px; border-radius: 3px; background: #DCE2DD; overflow: hidden">
+<div style="height: 6px; border-radius: 3px; background: {{accent}}; width: {{progress}}%"></div>
+</div>
+</header>
+
+<div style="flex: 1; overflow-y: auto; padding: 6px 22px 20px; display: flex; flex-direction: column; gap: 14px">
+
+<!-- STEP 1: SERVICE -->
+<sc-if value="{{isService}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 14px; color: #4A5863">How do you want to hand over your laundry?</p>
+<sc-for list="{{services}}" as="sv" hint-placeholder-count="2">
+<button onClick="{{sv.pick}}" style="text-align: left; border-radius: 20px; padding: 18px; background: {{sv.bg}}; border: 2px solid {{sv.border}}; display: flex; gap: 14px; align-items: flex-start; color: #14212B">
+<span style="width: 48px; height: 48px; border-radius: 14px; background: #E4EEF8; color: {{accent}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<sc-if value="{{sv.isWalk}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"></path></svg></sc-if>
+<sc-if value="{{sv.isDel}}" hint-placeholder-val="{{ false }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7"></path><circle cx="5.5" cy="18" r="2"></circle><circle cx="17.5" cy="18" r="2"></circle></svg></sc-if>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+<span style="font-weight: 700; font-size: 16px">{{sv.name}}</span>
+<span style="font-size: 13px; color: #4A5863; line-height: 1.4">{{sv.desc}}</span>
+<span style="font-size: 13px; font-weight: 700; color: {{accent}}">{{sv.fee}}</span>
+</span>
+<span style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid {{sv.border}}; background: {{sv.dot}}; flex-shrink: 0"></span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<!-- STEP 2: LOAD + SOAP -->
+<sc-if value="{{isLoad}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="background: #fff; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<span style="font-weight: 700; font-size: 16px">Laundry weight</span>
+<span style="font-size: 13px; color: #4A5863">{{rateLabel}} per kg</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<button onClick="{{decKg}}" disabled="{{atMin}}" aria-label="Decrease kilos" style="width: 52px; height: 52px; border-radius: 26px; border: 2px solid #D5DBD6; background: {{minusBg}}; color: {{minusColor}}; font-size: 26px; font-weight: 700">−</button>
+<div style="text-align: center">
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 800; line-height: 1">{{kg}}</div>
+<div style="font-size: 13px; color: #4A5863">kilograms</div>
+</div>
+<button onClick="{{incKg}}" aria-label="Increase kilos" style="width: 52px; height: 52px; border-radius: 26px; border: none; background: {{accent}}; color: #fff; font-size: 26px; font-weight: 700">+</button>
+</div>
+<div style="display: flex; gap: 8px; align-items: center; background: #FFF1E8; color: #8A3A12; border-radius: 12px; padding: 10px 12px; font-size: 13px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+<span>Minimum of 8 kg per order. Below 8 kg is charged as 8 kg.</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-weight: 700; font-size: 16px">Fabric soap</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{soaps}}" as="sp" hint-placeholder-count="4">
+<button onClick="{{sp.pick}}" style="text-align: left; border-radius: 18px; padding: 14px; background: {{sp.bg}}; border: 2px solid {{sp.border}}; display: flex; flex-direction: column; gap: 6px; min-height: 120px; color: #14212B">
+<span style="width: 34px; height: 34px; border-radius: 10px; background: {{sp.tint}}; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14212B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z"></path></svg>
+</span>
+<span style="font-weight: 700; font-size: 14px">{{sp.name}}</span>
+<span style="font-size: 12px; color: #4A5863; line-height: 1.35">{{sp.note}}</span>
+<span style="font-size: 12px; font-weight: 700; color: {{accent}}">{{sp.addLabel}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- STEP 3: LOCATION -->
+<sc-if value="{{isLocation}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<sc-if value="{{isDelivery}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 14px; color: #4A5863">Tap the map to pin where our rider should pick up and return your laundry.</p>
+<button onClick="{{dropPin}}" aria-label="Tap to pin your location on the map" style="position: relative; height: 250px; border-radius: 22px; border: 2px solid #D5DBD6; background: #E3EAE2; overflow: hidden; padding: 0; display: block; width: 100%">
+<svg width="100%" height="100%" viewBox="0 0 346 250" preserveAspectRatio="none" style="position: absolute; inset: 0" aria-hidden="true">
+<rect x="0" y="0" width="346" height="250" fill="#E3EAE2"></rect>
+<rect x="210" y="20" width="110" height="70" rx="10" fill="#CFE0C9"></rect>
+<rect x="20" y="160" width="90" height="70" rx="10" fill="#CFE0C9"></rect>
+<path d="M0 120 C 90 100, 200 150, 346 110" stroke="#fff" stroke-width="16" fill="none"></path>
+<path d="M140 0 L 170 250" stroke="#fff" stroke-width="12" fill="none"></path>
+<path d="M0 50 L 346 70" stroke="#fff" stroke-width="7" fill="none"></path>
+<path d="M260 250 L 300 0" stroke="#fff" stroke-width="7" fill="none"></path>
+<path d="M0 210 L 346 190" stroke="#fff" stroke-width="7" fill="none"></path>
+<path d="M240 160 q 30 20 70 10 l 0 60 l -80 0 z" fill="#BFD6EA"></path>
+</svg>
+<span style="position: absolute; left: {{pinX}}%; top: {{pinY}}%; transform: translate(-50%, -100%); display: block">
+<svg width="40" height="48" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 47s16-15.6 16-27A16 16 0 0 0 4 20c0 11.4 16 27 16 27z" fill="#E0662A" stroke="#fff" stroke-width="2.5"></path><circle cx="20" cy="20" r="6" fill="#fff"></circle></svg>
+</span>
+<span style="position: absolute; left: 12px; bottom: 12px; background: #fff; border-radius: 12px; padding: 7px 11px; font-size: 12px; font-weight: 700; color: #14212B">{{pinStatus}}</span>
+</button>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="addr" style="font-size: 13px; font-weight: 700">Address details</label>
+<input id="addr" placeholder="House no., street, barangay, landmark" style="min-height: 48px; border-radius: 14px; border: 1.5px solid #C8D0CA; padding: 0 14px; font-size: 14px; background: #fff; color: #14212B">
+</div>
+</div>
+</sc-if>
+<sc-if value="{{isWalkin}}" hint-placeholder-val="{{ false }}">
+<div style="background: #fff; border-radius: 20px; padding: 18px; display: flex; gap: 14px">
+<span style="width: 48px; height: 48px; border-radius: 14px; background: #E4EEF8; color: {{accent}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-weight: 700; font-size: 16px">Drop off at Laundry HUB</span>
+<span style="font-size: 13px; color: #4A5863; line-height: 1.4">[SHOP ADDRESS]<br>Open [SHOP HOURS]</span>
+</span>
+</div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-weight: 700; font-size: 16px">{{slotTitle}}</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{slots}}" as="sl" hint-placeholder-count="4">
+<button onClick="{{sl.pick}}" style="min-height: 48px; border-radius: 14px; border: 2px solid {{sl.border}}; background: {{sl.bg}}; color: {{sl.color}}; font-weight: 700; font-size: 14px">{{sl.label}}</button>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- STEP 4: PAYMENT -->
+<sc-if value="{{isPayment}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="background: #fff; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-weight: 700; font-size: 16px">Order summary</span>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Service</span><span style="font-weight: 700">{{serviceName}}</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Laundry ({{kg}} kg × {{rateLabel}})</span><span>{{washCost}}</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">{{soapName}} ({{kg}} kg × {{soapRate}})</span><span>{{soapCost}}</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Pickup &amp; delivery fee</span><span>{{feeCost}}</span></div>
+<div style="height: 1px; background: #E1E6E2"></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-weight: 700">Total</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; color: {{accent}}">{{total}}</span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-weight: 700; font-size: 16px">Payment method</span>
+<sc-for list="{{payments}}" as="pm" hint-placeholder-count="2">
+<button onClick="{{pm.pick}}" style="text-align: left; min-height: 64px; border-radius: 18px; padding: 14px 16px; background: {{pm.bg}}; border: 2px solid {{pm.border}}; display: flex; gap: 14px; align-items: center; color: #14212B">
+<span style="width: 40px; height: 40px; border-radius: 12px; background: {{pm.tint}}; color: {{pm.iconColor}}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0">{{pm.badge}}</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-weight: 700; font-size: 15px">{{pm.name}}</span>
+<span style="font-size: 12px; color: #4A5863">{{pm.desc}}</span>
+</span>
+<span style="width: 22px; height: 22px; border-radius: 11px; border: 2px solid {{pm.border}}; background: {{pm.dot}}; flex-shrink: 0"></span>
+</button>
+</sc-for>
+<sc-if value="{{isGcash}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="gnum" style="font-size: 13px; font-weight: 700">GCash mobile number</label>
+<input id="gnum" inputmode="numeric" placeholder="09XX XXX XXXX" style="min-height: 48px; border-radius: 14px; border: 1.5px solid #C8D0CA; padding: 0 14px; font-size: 14px; background: #fff; color: #14212B">
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+
+<footer style="background: #fff; border-top: 1px solid #E1E6E2; padding: 14px 22px 22px; display: flex; align-items: center; gap: 14px">
+<div style="flex: 1">
+<div style="font-size: 12px; color: #4A5863">Estimated total</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">{{total}}</div>
+</div>
+<button onClick="{{next}}" disabled="{{nextDisabled}}" style="min-height: 52px; padding: 0 26px; border-radius: 26px; border: none; background: {{nextBg}}; color: #fff; font-weight: 700; font-size: 15px">{{nextLabel}}</button>
+</footer>
+</div>
+</sc-if>
+
+<!-- ============ DONE ============ -->
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; padding: 60px 26px 30px; gap: 22px; align-items: center; text-align: center">
+<span style="width: 96px; height: 96px; border-radius: 48px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+</span>
+<div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.6px">Order placed!</div>
+<div style="font-size: 14px; color: #4A5863; margin-top: 6px">Order #LH-0001 · {{serviceName}}</div>
+</div>
+<div style="width: 100%; background: #fff; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 10px; text-align: left; box-sizing: border-box">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Weight</span><span style="font-weight: 700">{{kg}} kg</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Fabric soap</span><span style="font-weight: 700">{{soapName}}</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Schedule</span><span style="font-weight: 700">{{slotName}}</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: #4A5863">Payment</span><span style="font-weight: 700">{{payName}}</span></div>
+<div style="height: 1px; background: #E1E6E2"></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-weight: 700">Total</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 800; color: {{accent}}">{{total}}</span></div>
+</div>
+<div style="flex: 1"></div>
+<button onClick="{{goHome}}" style="width: 100%; min-height: 52px; border-radius: 26px; border: none; background: #14212B; color: #fff; font-weight: 700; font-size: 15px">Back to home</button>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1E63A8","options":["#1E63A8","#0F766E","#6D3FC0","#14212B"]},"ratePerKg":{"editor":"int","default":30,"min":1,"max":500,"unit":"₱"},"deliveryFee":{"editor":"int","default":60,"min":0,"max":1000,"unit":"₱"},"startScreen":{"editor":null},"startService":{"editor":null},"startKg":{"editor":null},"startSoap":{"editor":null},"startSlot":{"editor":null},"startPay":{"editor":null},"startPinned":{"editor":null},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const p = props || {};
+    const scr = Number(p.startScreen ?? 0);
+    this.state = {
+      screen: scr,
+      service: p.startService ?? (scr >= 2 ? 'delivery' : null),
+      kg: Number(p.startKg ?? 8),
+      soap: p.startSoap ?? 'std',
+      slot: p.startSlot !== undefined ? Number(p.startSlot) : (scr >= 4 ? 1 : null),
+      pay: p.startPay ?? 'cash',
+      pinX: 46, pinY: 52,
+      pinSet: p.startPinned === true || p.startPinned === 'true' || scr >= 4
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#1E63A8';
+    const rate = this.props.ratePerKg ?? 30;
+    const fee = this.props.deliveryFee ?? 60;
+    const peso = (n) => '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pesoShort = (n) => '₱' + Number(n).toLocaleString('en-PH');
+    const go = (n) => () => this.setState({ screen: n });
+
+    const soapList = [
+      { id: 'std', name: 'Standard', note: 'Everyday clean for regular clothes', add: 0, tint: '#E4EEF8' },
+      { id: 'hypo', name: 'Hypoallergenic', note: 'Gentle on sensitive skin', add: 5, tint: '#E6F2EA' },
+      { id: 'premium', name: 'Premium Scented', note: 'Long-lasting fresh fragrance', add: 8, tint: '#F3E8F7' },
+      { id: 'baby', name: 'Baby-Safe', note: 'Mild and dye-free formula', add: 6, tint: '#FFF1E8' }
+    ];
+    const soap = soapList.find((x) => x.id === s.soap) || soapList[0];
+    const isDelivery = s.service === 'delivery';
+    const kg = Math.max(8, s.kg);
+    const wash = kg * rate;
+    const soapCost = kg * soap.add;
+    const feeCost = isDelivery ? fee : 0;
+    const total = wash + soapCost + feeCost;
+
+    const sel = (on) => ({ bg: on ? '#F2F7FC' : '#fff', border: on ? accent : '#DCE2DD', dot: on ? accent : '#fff' });
+
+    const services = [
+      { id: 'walkin', name: 'Walk-in', desc: 'Bring your laundry to the shop and pick it up when it is ready.', fee: 'No extra fee', isWalk: true, isDel: false },
+      { id: 'delivery', name: 'Pickup & Delivery', desc: 'Our rider collects it at your pinned location and returns it clean.', fee: '+ ' + pesoShort(fee) + ' delivery fee', isWalk: false, isDel: true }
+    ].map((x) => ({ ...x, ...sel(s.service === x.id), pick: () => this.setState({ service: x.id, slot: null }) }));
+
+    const soaps = soapList.map((x) => ({ ...x, ...sel(s.soap === x.id), addLabel: x.add ? '+ ' + pesoShort(x.add) + ' /kg' : 'Included', pick: () => this.setState({ soap: x.id }) }));
+
+    const slotNames = isDelivery ? ['Today, 2–4 PM', 'Today, 4–6 PM', 'Tomorrow, 9–11 AM', 'Tomorrow, 1–3 PM'] : ['Today, morning', 'Today, afternoon', 'Tomorrow, morning', 'Tomorrow, afternoon'];
+    const slots = slotNames.map((label, i) => ({ label, bg: s.slot === i ? accent : '#fff', color: s.slot === i ? '#fff' : '#14212B', border: s.slot === i ? accent : '#DCE2DD', pick: () => this.setState({ slot: i }) }));
+
+    const payments = [
+      { id: 'cash', name: 'Cash', desc: isDelivery ? 'Pay the rider upon delivery' : 'Pay at the counter', badge: '₱', tint: '#E6F2EA', iconColor: '#1D5E36' },
+      { id: 'gcash', name: 'GCash', desc: 'Pay instantly from your e-wallet', badge: 'G', tint: '#E4EEF8', iconColor: '#1E4FA8' }
+    ].map((x) => ({ ...x, ...sel(s.pay === x.id), pick: () => this.setState({ pay: x.id }) }));
+
+    const titles = ['', 'Choose service', 'Weight & fabric soap', isDelivery ? 'Pin your location' : 'Drop-off schedule', 'Review & pay'];
+    let nextDisabled = false;
+    if (s.screen === 1 && !s.service) nextDisabled = true;
+    if (s.screen === 3 && (s.slot === null || (isDelivery && !s.pinSet))) nextDisabled = true;
+
+    return {
+      accent,
+      isHome: s.screen === 0, inFlow: s.screen >= 1 && s.screen <= 4, isDone: s.screen === 5,
+      isService: s.screen === 1, isLoad: s.screen === 2, isLocation: s.screen === 3, isPayment: s.screen === 4,
+      isDelivery, isWalkin: !isDelivery, isGcash: s.pay === 'gcash',
+      step: s.screen, stepTitle: titles[s.screen] || '', progress: s.screen * 25,
+      startOrder: () => this.setState({ screen: 1 }),
+      back: go(Math.max(0, s.screen - 1)),
+      next: () => { if (!nextDisabled) this.setState({ screen: s.screen + 1 }); },
+      goHome: () => this.setState({ screen: 0, service: null, kg: 8, soap: 'std', slot: null, pay: 'cash', pinSet: false, pinX: 50, pinY: 50 }),
+      nextDisabled, nextBg: nextDisabled ? '#9AA5AD' : accent,
+      nextLabel: s.screen === 4 ? 'Place order' : 'Continue',
+      services, soaps, slots, payments,
+      kg, atMin: kg <= 8, minusBg: kg <= 8 ? '#EEF1EE' : '#fff', minusColor: kg <= 8 ? '#9AA5AD' : '#14212B',
+      incKg: () => this.setState({ kg: kg + 1 }),
+      decKg: () => this.setState({ kg: Math.max(8, kg - 1) }),
+      dropPin: (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        const x = Math.min(95, Math.max(5, ((e.clientX - r.left) / r.width) * 100));
+        const y = Math.min(95, Math.max(18, ((e.clientY - r.top) / r.height) * 100));
+        this.setState({ pinX: x, pinY: y, pinSet: true });
+      },
+      pinX: s.pinX, pinY: s.pinY, pinStatus: s.pinSet ? 'Location pinned' : 'Tap anywhere to pin',
+      slotTitle: isDelivery ? 'Pickup time' : 'Drop-off time',
+      rateLabel: pesoShort(rate), soapRate: pesoShort(soap.add),
+      serviceName: isDelivery ? 'Pickup & Delivery' : 'Walk-in',
+      soapName: soap.name, slotName: s.slot === null ? '—' : slotNames[s.slot],
+      payName: s.pay === 'gcash' ? 'GCash' : 'Cash',
+      washCost: peso(wash), soapCost: peso(soapCost), feeCost: peso(feeCost), total: peso(total)
+    };
+  }
+}
+</script>
+</body>
+</html>

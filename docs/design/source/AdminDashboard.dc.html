@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laundry HUB admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E63A8}a:hover{color:#123F6E}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 900px; display: flex; flex-wrap: wrap; background: #F3F5F2; color: #14212B; font-family: 'DM Sans', system-ui, sans-serif; box-sizing: border-box">
+
+<!-- SIDEBAR -->
+<aside style="flex: 1 1 230px; max-width: 100%; background: #14212B; color: #fff; padding: 24px 16px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 22px">
+<span style="width: 38px; height: 38px; border-radius: 11px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="3"></rect><circle cx="12" cy="13" r="5"></circle><path d="M8 6h.01M11 6h2"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 19px">Laundry HUB</span>
+<span style="font-size: 12px; color: #B8C3CC">Admin console</span>
+</span>
+</div>
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button onClick="{{t.pick}}" style="min-height: 46px; border-radius: 12px; border: none; background: {{t.bg}}; color: {{t.color}}; font-weight: 700; font-size: 14px; text-align: left; padding: 0 14px; display: flex; align-items: center; gap: 12px">
+<span style="width: 8px; height: 8px; border-radius: 4px; background: {{t.dot}}"></span>{{t.label}}</button>
+</sc-for>
+<div style="flex: 1; min-height: 20px"></div>
+<div style="border-top: 1px solid #2C3B47; padding: 16px 8px 0; display: flex; align-items: center; gap: 10px">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #2C3B47; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">AD</span>
+<span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">Admin</span><span style="font-size: 12px; color: #B8C3CC">Owner</span></span>
+<a href="AdminLogin.dc.html" style="color: #B8C3CC; font-size: 13px; padding: 10px 4px">Log out</a>
+</div>
+</aside>
+
+<!-- CONTENT -->
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 22px; box-sizing: border-box">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px">
+<div>
+<div style="font-size: 14px; color: #4A5863">{{pageKicker}}</div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -0.6px">{{pageTitle}}</h1>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+<label for="search" style="position: absolute; left: -9999px">Search orders</label>
+<input id="search" placeholder="Search order no. or customer" style="min-height: 44px; width: 260px; max-width: 100%; border-radius: 22px; border: 1.5px solid #C8D0CA; padding: 0 16px; font-size: 14px; background: #fff; color: #14212B">
+<button aria-label="Notifications" style="width: 44px; height: 44px; border-radius: 22px; border: 1.5px solid #C8D0CA; background: #fff; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14212B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+</button>
+</div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<sc-if value="{{isDash}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 22px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+<div style="background: #fff; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #4A5863">Orders today</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 800">{{kpiOrders}}</span></div>
+<div style="background: #fff; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #4A5863">Waiting to process</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 800">{{kpiPending}}</span></div>
+<div style="background: #fff; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; color: #4A5863">Kilos in today</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 800">{{kpiKg}} kg</span></div>
+<div style="background: {{accent}}; color: #fff; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px">Sales today</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 800">{{kpiSales}}</span></div>
+</div>
+
+<div style="background: #fff; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-weight: 700; font-size: 17px">Order pipeline</span>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px">
+<sc-for list="{{pipeline}}" as="pl" hint-placeholder-count="5">
+<div style="border-radius: 14px; padding: 14px; background: {{pl.bg}}; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; font-weight: 700; color: {{pl.fg}}">{{pl.label}}</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; color: {{pl.fg}}">{{pl.count}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="background: #fff; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-weight: 700; font-size: 17px">Recent orders</span><button onClick="{{goOrders}}" style="border: none; background: none; color: {{accent}}; font-weight: 700; font-size: 14px; padding: 10px 4px">View all</button></div>
+<div style="overflow-x: auto">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px">
+<thead><tr style="text-align: left; color: #4A5863; font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px">
+<th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Order</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Customer</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Service</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Kg</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Payment</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Total</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Status</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2"></th>
+</tr></thead>
+<tbody>
+<sc-for list="{{orders}}" as="o" hint-placeholder-count="6">
+<tr>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE; font-weight: 700">{{o.id}}</td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE">{{o.customer}}</td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE">{{o.serviceName}}</td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE">{{o.kg}}</td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE">{{o.payName}}</td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE; font-weight: 700">{{o.totalLabel}}</td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE"><span style="display: inline-block; padding: 5px 10px; border-radius: 10px; font-size: 12px; font-weight: 700; background: {{o.badgeBg}}; color: {{o.badgeFg}}">{{o.status}}</span></td>
+<td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE"><button onClick="{{o.open}}" style="min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1.5px solid #C8D0CA; background: #fff; font-weight: 700; font-size: 13px; color: #14212B">Open</button></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ===== ORDERS ===== -->
+<sc-if value="{{isOrders}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="6">
+<button onClick="{{f.pick}}" style="min-height: 40px; padding: 0 16px; border-radius: 20px; border: 1.5px solid {{f.border}}; background: {{f.bg}}; color: {{f.color}}; font-weight: 700; font-size: 13px">{{f.label}} ({{f.count}})</button>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+<div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{filtered}}" as="o" hint-placeholder-count="4">
+<button onClick="{{o.select}}" style="text-align: left; border-radius: 16px; padding: 14px; background: #fff; border: 2px solid {{o.selBorder}}; display: flex; flex-direction: column; gap: 6px; color: #14212B">
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-weight: 700">{{o.id}}</span><span style="padding: 4px 9px; border-radius: 9px; font-size: 11px; font-weight: 700; background: {{o.badgeBg}}; color: {{o.badgeFg}}">{{o.status}}</span></span>
+<span style="font-size: 14px">{{o.customer}}</span>
+<span style="font-size: 12px; color: #4A5863">{{o.serviceName}} · {{o.kg}} kg · {{o.totalLabel}}</span>
+</button>
+</sc-for>
+<sc-if value="{{noneFiltered}}" hint-placeholder-val="{{ false }}"><div style="padding: 20px; border-radius: 16px; background: #fff; color: #4A5863; font-size: 14px">No orders with this status.</div></sc-if>
+</div>
+
+<div style="flex: 999 1 420px; min-width: 0; background: #fff; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-start">
+<div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 800">{{sel.id}}</div>
+<div style="font-size: 14px; color: #4A5863">{{sel.customer}} · {{sel.phone}}</div>
+</div>
+<span style="padding: 7px 12px; border-radius: 11px; font-size: 13px; font-weight: 700; background: {{sel.badgeBg}}; color: {{sel.badgeFg}}">{{sel.status}}</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px">
+<div style="background: #F3F5F2; border-radius: 14px; padding: 12px"><div style="font-size: 12px; color: #4A5863">Service</div><div style="font-weight: 700">{{sel.serviceName}}</div></div>
+<div style="background: #F3F5F2; border-radius: 14px; padding: 12px"><div style="font-size: 12px; color: #4A5863">Weight</div><div style="font-weight: 700">{{sel.kg}} kg</div></div>
+<div style="background: #F3F5F2; border-radius: 14px; padding: 12px"><div style="font-size: 12px; color: #4A5863">Fabric soap</div><div style="font-weight: 700">{{sel.soapName}}</div></div>
+<div style="background: #F3F5F2; border-radius: 14px; padding: 12px"><div style="font-size: 12px; color: #4A5863">Schedule</div><div style="font-weight: 700">{{sel.slot}}</div></div>
+</div>
+
+<sc-if value="{{sel.isDelivery}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-weight: 700; font-size: 15px">Pinned location</span>
+<div style="position: relative; height: 200px; border-radius: 16px; overflow: hidden; border: 1.5px solid #D5DBD6">
+<svg width="100%" height="100%" viewBox="0 0 500 200" preserveAspectRatio="none" style="position: absolute; inset: 0" aria-hidden="true">
+<rect width="500" height="200" fill="#E3EAE2"></rect><rect x="330" y="16" width="130" height="60" rx="10" fill="#CFE0C9"></rect>
+<path d="M0 100 C 140 80, 300 130, 500 90" stroke="#fff" stroke-width="16" fill="none"></path><path d="M200 0 L 230 200" stroke="#fff" stroke-width="12" fill="none"></path><path d="M0 40 L 500 58" stroke="#fff" stroke-width="7" fill="none"></path><path d="M0 170 L 500 160" stroke="#fff" stroke-width="7" fill="none"></path>
+</svg>
+<span style="position: absolute; left: {{sel.pinX}}%; top: {{sel.pinY}}%; transform: translate(-50%, -100%)"><svg width="34" height="42" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 47s16-15.6 16-27A16 16 0 0 0 4 20c0 11.4 16 27 16 27z" fill="#E0662A" stroke="#fff" stroke-width="2.5"></path><circle cx="20" cy="20" r="6" fill="#fff"></circle></svg></span>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px"><span style="color: #4A5863">{{sel.address}} · {{sel.coords}}</span><a href="#" style="font-weight: 700">Open in Google Maps</a></div>
+</div>
+</sc-if>
+<sc-if value="{{sel.isWalkin}}" hint-placeholder-val="{{ false }}">
+<div style="background: #F3F5F2; border-radius: 14px; padding: 14px; font-size: 14px; color: #4A5863">Walk-in order — customer drops off and picks up at the shop.</div>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-weight: 700; font-size: 15px">Update status</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{statusButtons}}" as="sb" hint-placeholder-count="5">
+<button onClick="{{sb.pick}}" style="min-height: 42px; padding: 0 14px; border-radius: 21px; border: 1.5px solid {{sb.border}}; background: {{sb.bg}}; color: {{sb.color}}; font-weight: 700; font-size: 13px">{{sb.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{sel.isDelivery}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="rider" style="font-weight: 700; font-size: 15px">Assign rider</label>
+<select id="rider" style="min-height: 46px; border-radius: 12px; border: 1.5px solid #C8D0CA; padding: 0 12px; font-size: 14px; background: #fff; color: #14212B; max-width: 320px"><option>[RIDER 1]</option><option>[RIDER 2]</option><option>[RIDER 3]</option></select>
+</div>
+</sc-if>
+
+<div style="border-top: 1px solid #E1E6E2; padding-top: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<div style="display: flex; justify-content: space-between"><span style="color: #4A5863">Laundry ({{sel.kg}} kg × {{rateLabel}})</span><span>{{sel.washLabel}}</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #4A5863">{{sel.soapName}} add-on</span><span>{{sel.soapLabel}}</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #4A5863">Delivery fee</span><span>{{sel.feeLabel}}</span></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-weight: 700">Total · {{sel.payName}} ({{sel.payStatus}})</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 800; color: {{accent}}">{{sel.totalLabel}}</span></div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- ===== PRICING ===== -->
+<sc-if value="{{isPricing}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+<div style="flex: 1 1 340px; background: #fff; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-weight: 700; font-size: 17px">Rates</span>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="rate" style="font-size: 13px; font-weight: 700">Price per kilo (₱)</label><input id="rate" type="number" value="30" style="min-height: 46px; border-radius: 12px; border: 1.5px solid #C8D0CA; padding: 0 12px; font-size: 15px; color: #14212B"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="minkg" style="font-size: 13px; font-weight: 700">Minimum load (kg)</label><input id="minkg" type="number" value="8" style="min-height: 46px; border-radius: 12px; border: 1.5px solid #C8D0CA; padding: 0 12px; font-size: 15px; color: #14212B"><span style="font-size: 12px; color: #4A5863">Orders below this are charged as the minimum.</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="dfee" style="font-size: 13px; font-weight: 700">Pickup &amp; delivery fee (₱)</label><input id="dfee" type="number" value="60" style="min-height: 46px; border-radius: 12px; border: 1.5px solid #C8D0CA; padding: 0 12px; font-size: 15px; color: #14212B"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="radius" style="font-size: 13px; font-weight: 700">Delivery radius (km)</label><input id="radius" type="number" value="5" style="min-height: 46px; border-radius: 12px; border: 1.5px solid #C8D0CA; padding: 0 12px; font-size: 15px; color: #14212B"><span style="font-size: 12px; color: #4A5863">Pins outside this distance from the shop are rejected.</span></div>
+</div>
+
+<div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div style="background: #fff; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-weight: 700; font-size: 17px">Fabric soaps</span><button style="min-height: 40px; padding: 0 16px; border-radius: 20px; border: 1.5px solid #C8D0CA; background: #fff; font-weight: 700; font-size: 13px; color: #14212B">+ Add soap</button></div>
+<div style="overflow-x: auto">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 460px">
+<thead><tr style="text-align: left; color: #4A5863; font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px"><th style="padding: 8px; border-bottom: 1px solid #E1E6E2">Name</th><th style="padding: 8px; border-bottom: 1px solid #E1E6E2">Add-on per kg</th><th style="padding: 8px; border-bottom: 1px solid #E1E6E2">Available</th></tr></thead>
+<tbody>
+<sc-for list="{{soapRows}}" as="sr" hint-placeholder-count="4">
+<tr><td style="padding: 10px 8px; border-bottom: 1px solid #EEF1EE; font-weight: 700">{{sr.name}}</td><td style="padding: 10px 8px; border-bottom: 1px solid #EEF1EE">₱{{sr.add}}</td><td style="padding: 10px 8px; border-bottom: 1px solid #EEF1EE"><input type="checkbox" checked aria-label="Available" style="width: 20px; height: 20px; margin: 0"></td></tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</div>
+<div style="background: #fff; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-weight: 700; font-size: 17px">Payment methods</span>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="checkbox" checked style="width: 20px; height: 20px; margin: 0">Cash (pay at counter or to rider)</label>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="checkbox" checked style="width: 20px; height: 20px; margin: 0">GCash</label>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="gacct" style="font-size: 13px; font-weight: 700">Shop GCash number</label><input id="gacct" placeholder="09XX XXX XXXX" style="min-height: 46px; border-radius: 12px; border: 1.5px solid #C8D0CA; padding: 0 12px; font-size: 15px; color: #14212B; max-width: 280px"></div>
+</div>
+<button style="align-self: flex-end; min-height: 50px; padding: 0 28px; border-radius: 25px; border: none; background: {{accent}}; color: #fff; font-weight: 700; font-size: 15px">Save changes</button>
+</div>
+</div>
+</sc-if>
+
+<!-- ===== USERS ===== -->
+<sc-if value="{{isUsers}}" hint-placeholder-val="{{ false }}">
+<div style="background: #fff; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center">
+<div style="display: flex; gap: 6px; background: #EEF1EE; border-radius: 14px; padding: 4px">
+<sc-for list="{{userTabs}}" as="ut" hint-placeholder-count="3">
+<button onClick="{{ut.pick}}" style="min-height: 40px; padding: 0 16px; border-radius: 11px; border: none; background: {{ut.bg}}; color: {{ut.color}}; font-weight: 700; font-size: 13px">{{ut.label}}</button>
+</sc-for>
+</div>
+<button style="min-height: 42px; padding: 0 18px; border-radius: 21px; border: none; background: {{accent}}; color: #fff; font-weight: 700; font-size: 14px">{{addUserLabel}}</button>
+</div>
+<div style="overflow-x: auto">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px">
+<thead><tr style="text-align: left; color: #4A5863; font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px"><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Name</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Contact</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">{{userCol3}}</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2">Status</th><th style="padding: 10px 8px; border-bottom: 1px solid #E1E6E2"></th></tr></thead>
+<tbody>
+<sc-for list="{{userRows}}" as="u" hint-placeholder-count="4">
+<tr><td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE; font-weight: 700">{{u.name}}</td><td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE">{{u.contact}}</td><td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE">{{u.col3}}</td><td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE"><span style="display: inline-block; padding: 5px 10px; border-radius: 10px; font-size: 12px; font-weight: 700; background: #E6F2EA; color: #1D5E36">{{u.status}}</span></td><td style="padding: 12px 8px; border-bottom: 1px solid #EEF1EE"><button style="min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1.5px solid #C8D0CA; background: #fff; font-weight: 700; font-size: 13px; color: #14212B">Edit</button></td></tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</div>
+</sc-if>
+
+<!-- ===== REPORTS ===== -->
+<sc-if value="{{isReports}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px">
+<div style="background: #fff; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #4A5863">Cash sales</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800">{{cashSales}}</div></div>
+<div style="background: #fff; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #4A5863">GCash sales</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800">{{gcashSales}}</div></div>
+<div style="background: #fff; border-radius: 18px; padding: 18px"><div style="font-size: 13px; color: #4A5863">Delivery vs walk-in</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800">{{deliveryCount}} / {{walkinCount}}</div></div>
+</div>
+<div style="background: #fff; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-weight: 700; font-size: 17px">Sales by fabric soap</span>
+<sc-for list="{{soapSales}}" as="ss" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; font-size: 14px">
+<span style="width: 140px; flex-shrink: 0">{{ss.name}}</span>
+<span style="flex: 1; height: 14px; border-radius: 7px; background: #EEF1EE; overflow: hidden"><span style="display: block; height: 14px; border-radius: 7px; background: {{accent}}; width: {{ss.pct}}%"></span></span>
+<span style="width: 90px; text-align: right; font-weight: 700">{{ss.label}}</span>
+</div>
+</sc-for>
+</div>
+<button style="align-self: flex-start; min-height: 46px; padding: 0 20px; border-radius: 23px; border: 1.5px solid #C8D0CA; background: #fff; font-weight: 700; font-size: 14px; color: #14212B">Export CSV</button>
+</div>
+</sc-if>
+
+<div style="font-size: 12px; color: #6B7780">Sample data shown for design purposes.</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1E63A8","options":["#1E63A8","#0F766E","#6D3FC0","#14212B"]},"ratePerKg":{"editor":"int","default":30,"min":1,"max":500,"unit":"₱"},"deliveryFee":{"editor":"int","default":60,"min":0,"max":1000,"unit":"₱"},"startTab":{"editor":null},"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const p = props || {};
+    this.state = {
+      tab: p.startTab ?? 'dashboard', filter: 'All', selId: 'LH-0001', userTab: 'customers',
+      orders: [
+        { id: 'LH-0001', customer: 'Maria Santos', phone: '0917 XXX 1021', service: 'delivery', kg: 10, soap: 'hypo', pay: 'gcash', paid: true, status: 'Out for delivery', slot: 'Today, 2–4 PM', address: 'Brgy. San Isidro', pinX: 62, pinY: 55 },
+        { id: 'LH-0002', customer: 'Juan Dela Cruz', phone: '0918 XXX 3340', service: 'walkin', kg: 8, soap: 'std', pay: 'cash', paid: false, status: 'Washing', slot: 'Today, morning' },
+        { id: 'LH-0003', customer: 'Ana Reyes', phone: '0927 XXX 5582', service: 'delivery', kg: 12, soap: 'premium', pay: 'cash', paid: false, status: 'Pending', slot: 'Today, 4–6 PM', address: 'Brgy. Poblacion', pinX: 30, pinY: 48 },
+        { id: 'LH-0004', customer: 'Mark Villanueva', phone: '0995 XXX 7713', service: 'walkin', kg: 9, soap: 'baby', pay: 'gcash', paid: true, status: 'Ready', slot: 'Today, afternoon' },
+        { id: 'LH-0005', customer: 'Liza Gonzaga', phone: '0906 XXX 2209', service: 'delivery', kg: 8, soap: 'std', pay: 'gcash', paid: true, status: 'Completed', slot: 'Today, 9–11 AM', address: 'Brgy. Santa Cruz', pinX: 78, pinY: 35 },
+        { id: 'LH-0006', customer: 'Paolo Tan', phone: '0919 XXX 6650', service: 'delivery', kg: 15, soap: 'hypo', pay: 'cash', paid: false, status: 'Pending', slot: 'Tomorrow, 9–11 AM', address: 'Brgy. Bagong Silang', pinX: 45, pinY: 70 }
+      ]
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#1E63A8';
+    const rate = this.props.ratePerKg ?? 30;
+    const fee = this.props.deliveryFee ?? 60;
+    const peso = (n) => '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const soaps = { std: { name: 'Standard', add: 0 }, hypo: { name: 'Hypoallergenic', add: 5 }, premium: { name: 'Premium Scented', add: 8 }, baby: { name: 'Baby-Safe', add: 6 } };
+    const statuses = ['Pending', 'Washing', 'Ready', 'Out for delivery', 'Completed'];
+    const badge = {
+      'Pending': ['#EEF1EE', '#3A4651'], 'Washing': ['#E4EEF8', '#174B80'], 'Ready': ['#DFF3F0', '#0B5B54'],
+      'Out for delivery': ['#FFF1E8', '#8A3A12'], 'Completed': ['#E6F2EA', '#1D5E36']
+    };
+    const orders = s.orders.map((o) => {
+      const kg = Math.max(8, o.kg);
+      const soap = soaps[o.soap];
+      const wash = kg * rate, soapC = kg * soap.add, feeC = o.service === 'delivery' ? fee : 0;
+      const total = wash + soapC + feeC;
+      return {
+        ...o, kg, total, soapName: soap.name,
+        serviceName: o.service === 'delivery' ? 'Pickup & Delivery' : 'Walk-in',
+        isDelivery: o.service === 'delivery', isWalkin: o.service !== 'delivery',
+        payName: o.pay === 'gcash' ? 'GCash' : 'Cash', payStatus: o.paid ? 'paid' : 'unpaid',
+        washLabel: peso(wash), soapLabel: peso(soapC), feeLabel: peso(feeC), totalLabel: peso(total),
+        badgeBg: badge[o.status][0], badgeFg: badge[o.status][1],
+        coords: '[LAT], [LNG]',
+        selBorder: o.id === s.selId ? accent : '#E1E6E2',
+        open: () => this.setState({ tab: 'orders', selId: o.id, filter: 'All' }),
+        select: () => this.setState({ selId: o.id })
+      };
+    });
+    const sel = orders.find((o) => o.id === s.selId) || orders[0];
+    const filtered = s.filter === 'All' ? orders : orders.filter((o) => o.status === s.filter);
+    const setStatus = (st) => () => this.setState({ orders: s.orders.map((o) => o.id === sel.id ? { ...o, status: st } : o) });
+
+    const tabDefs = [['dashboard', 'Dashboard'], ['orders', 'Orders'], ['pricing', 'Pricing & soaps'], ['users', 'Customers & riders'], ['reports', 'Sales reports']];
+    const tabs = tabDefs.map(([id, label]) => ({ label, bg: s.tab === id ? '#24333F' : 'transparent', color: s.tab === id ? '#fff' : '#C9D2D9', dot: s.tab === id ? accent : '#3A4A57', pick: () => this.setState({ tab: id }) }));
+    const titles = { dashboard: ['Today’s overview', 'Dashboard'], orders: ['Manage and update', 'Orders'], pricing: ['Settings', 'Pricing & soaps'], users: ['Accounts', 'Customers & riders'], reports: ['Insights', 'Sales reports'] };
+
+    const pipeline = statuses.map((st) => ({ label: st, count: orders.filter((o) => o.status === st).length, bg: badge[st][0], fg: badge[st][1] }));
+    const filters = ['All', ...statuses].map((f) => ({
+      label: f, count: f === 'All' ? orders.length : orders.filter((o) => o.status === f).length,
+      bg: s.filter === f ? accent : '#fff', color: s.filter === f ? '#fff' : '#14212B', border: s.filter === f ? accent : '#C8D0CA',
+      pick: () => this.setState({ filter: f })
+    }));
+    const statusButtons = statuses.map((st) => ({ label: st, bg: sel.status === st ? accent : '#fff', color: sel.status === st ? '#fff' : '#14212B', border: sel.status === st ? accent : '#C8D0CA', pick: setStatus(st) }));
+
+    const userData = {
+      customers: [
+        { name: 'Maria Santos', contact: '0917 XXX 1021', col3: '1 order', status: 'Active' },
+        { name: 'Juan Dela Cruz', contact: '0918 XXX 3340', col3: '1 order', status: 'Active' },
+        { name: 'Ana Reyes', contact: '0927 XXX 5582', col3: '1 order', status: 'Active' },
+        { name: 'Paolo Tan', contact: '0919 XXX 6650', col3: '1 order', status: 'Active' }
+      ],
+      riders: [
+        { name: '[RIDER 1]', contact: '09XX XXX XXXX', col3: '[PLATE NO.]', status: 'On duty' },
+        { name: '[RIDER 2]', contact: '09XX XXX XXXX', col3: '[PLATE NO.]', status: 'On duty' }
+      ],
+      staff: [
+        { name: 'Admin', contact: 'admin@laundryhub.ph', col3: 'Owner', status: 'Active' },
+        { name: '[STAFF NAME]', contact: 'staff@laundryhub.ph', col3: 'Counter staff', status: 'Active' }
+      ]
+    };
+    const userTabs = [['customers', 'Customers'], ['riders', 'Riders'], ['staff', 'Staff']].map(([id, label]) => ({ label, bg: s.userTab === id ? '#fff' : 'transparent', color: s.userTab === id ? '#14212B' : '#4A5863', pick: () => this.setState({ userTab: id }) }));
+
+    const sum = (arr) => arr.reduce((a, o) => a + o.total, 0);
+    const soapTotals = Object.keys(soaps).map((k) => ({ name: soaps[k].name, v: sum(orders.filter((o) => o.soap === k)) }));
+    const maxSoap = Math.max(1, ...soapTotals.map((x) => x.v));
+
+    return {
+      accent, tabs, rateLabel: '₱' + rate,
+      isDash: s.tab === 'dashboard', isOrders: s.tab === 'orders', isPricing: s.tab === 'pricing', isUsers: s.tab === 'users', isReports: s.tab === 'reports',
+      pageKicker: titles[s.tab][0], pageTitle: titles[s.tab][1],
+      kpiOrders: orders.length, kpiPending: orders.filter((o) => o.status === 'Pending').length,
+      kpiKg: orders.reduce((a, o) => a + o.kg, 0), kpiSales: peso(sum(orders)),
+      pipeline, orders, filters, filtered, noneFiltered: filtered.length === 0, sel, statusButtons,
+      goOrders: () => this.setState({ tab: 'orders' }),
+      soapRows: Object.values(soaps),
+      userTabs, userRows: userData[s.userTab],
+      userCol3: s.userTab === 'customers' ? 'Orders' : (s.userTab === 'riders' ? 'Vehicle' : 'Role'),
+      addUserLabel: s.userTab === 'customers' ? '+ Add customer' : (s.userTab === 'riders' ? '+ Add rider' : '+ Add staff'),
+      cashSales: peso(sum(orders.filter((o) => o.pay === 'cash'))), gcashSales: peso(sum(orders.filter((o) => o.pay === 'gcash'))),
+      deliveryCount: orders.filter((o) => o.isDelivery).length, walkinCount: orders.filter((o) => o.isWalkin).length,
+      soapSales: soapTotals.map((x) => ({ name: x.name, pct: Math.round((x.v / maxSoap) * 100), label: peso(x.v) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Build output
+target/
+web-dist/
+
+# Real keys (commit config.example.properties instead)
+config.properties
+
+# Vercel link
+.vercel/
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
+# IDE / OS
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.factorypath
+Thumbs.db
+.DS_Store

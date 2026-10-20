@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.laundryhub</groupId>
+  <artifactId>laundry-hub-web</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <name>Laundry HUB Web</name>
+  <description>Laundry HUB responsive website (PWA) written in Java and compiled to JavaScript with TeaVM.</description>
+
+  <properties>
+    <!-- Change to 21 once JDK 21 is installed (the guide's target). -->
+    <java.version>17</java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <teavm.version>0.16.0</teavm.version>
+    <junit.version>6.1.3</junit.version>
+
+    <!-- Everything Vercel serves ends up here. -->
+    <webdist.dir>${project.basedir}/web-dist</webdist.dir>
+
+    <!-- Defaults; overridden by config.example.properties / config.properties. -->
+    <SUPABASE_URL></SUPABASE_URL>
+    <SUPABASE_PUBLISHABLE_KEY></SUPABASE_PUBLISHABLE_KEY>
+    <GOOGLE_MAPS_KEY></GOOGLE_MAPS_KEY>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-classlib</artifactId>
+      <version>${teavm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-jso</artifactId>
+      <version>${teavm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-jso-apis</artifactId>
+      <version>${teavm.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- web-dist is build output too, so `clean` empties it (but keeps the Vercel link).
+           Only the contents are deleted, so it works while Live Server has the folder open. -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${webdist.dir}</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+              <excludes>
+                <exclude>.vercel/**</exclude>
+              </excludes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <!-- Reads the keys: example file first, then the real (gitignored) one overrides it. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>read-project-properties</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file>${project.basedir}/config.example.properties</file>
+                <file>${project.basedir}/config.properties</file>
+              </files>
+              <quiet>true</quiet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+      </plugin>
+
+      <!-- Copies the static site and generates config.js from the properties. -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>copy-webapp</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${webdist.dir}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/webapp</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-config-js</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${webdist.dir}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/main/config</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Compiles the Java app to web-dist/js/app.js. -->
+      <plugin>
+        <groupId>org.teavm</groupId>
+        <artifactId>teavm-maven-plugin</artifactId>
+        <version>${teavm.version}</version>
+        <executions>
+          <execution>
+            <id>web-client</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <targetDirectory>${webdist.dir}/js</targetDirectory>
+              <targetFileName>app.js</targetFileName>
+              <mainClass>com.laundryhub.web.App</mainClass>
+              <minifying>true</minifying>
+              <optimizationLevel>ADVANCED</optimizationLevel>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,6 @@
+# Keep the Linux Maven wrapper runnable on GitHub Actions; Windows scripts keep CRLF.
+mvnw        text eol=lf
+*.sh        text eol=lf
+*.cmd       text eol=crlf
+*.png       binary
+*.woff2     binary

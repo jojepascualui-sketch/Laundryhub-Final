@@ -1,0 +1,51 @@
+# Optional: build with Java and deploy to Vercel on every push to main.
+# Needs these GitHub repository secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, GOOGLE_MAPS_KEY   (public values, same as config.properties)
+#   VERCEL_TOKEN      (Vercel → Account Settings → Tokens)
+#   VERCEL_ORG_ID, VERCEL_PROJECT_ID   (from web-dist/.vercel/project.json after the first manual deploy)
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vercel
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Write config.properties from secrets
+        run: |
+          cat > config.properties <<EOF
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_KEY }}
+          EOF
+
+      - name: Build (JUnit tests + TeaVM)
+        run: |
+          chmod +x mvnw
+          ./mvnw -B clean package
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Upload web-dist to Vercel (production)
+        working-directory: web-dist
+        run: npx --yes vercel@latest deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"

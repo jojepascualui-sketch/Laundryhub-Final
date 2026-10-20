@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laundry HUB rider</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1E63A8}a:hover{color:#123F6E}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; background: #F3F5F2; color: #14212B; font-family: 'DM Sans', system-ui, sans-serif; overflow: hidden">
+
+<!-- ===== BOOKINGS LIST ===== -->
+<sc-if value="{{isList}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; display: flex; flex-direction: column; min-height: 0">
+<header style="background: #14212B; color: #fff; padding: 26px 22px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div>
+<div style="font-size: 13px; color: #B8C3CC">Laundry HUB Rider</div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px">Hi, [RIDER NAME]</div>
+</div>
+<button onClick="{{toggleDuty}}" aria-pressed="{{onDuty}}" style="min-height: 44px; padding: 0 8px 0 14px; border-radius: 22px; border: none; background: {{dutyBg}}; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 10px">{{dutyLabel}}
+<span style="width: 40px; height: 24px; border-radius: 12px; background: rgba(255,255,255,0.3); position: relative; display: block"><span style="position: absolute; top: 3px; left: {{knobLeft}}px; width: 18px; height: 18px; border-radius: 9px; background: #fff; display: block"></span></span>
+</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="background: #24333F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 11px; color: #B8C3CC">Available</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">{{availCount}}</div></div>
+<div style="background: #24333F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 11px; color: #B8C3CC">Accepted</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">{{acceptedCount}}</div></div>
+<div style="background: #24333F; border-radius: 14px; padding: 10px 12px"><div style="font-size: 11px; color: #B8C3CC">Done today</div><div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800">{{doneCount}}</div></div>
+</div>
+</header>
+
+<div style="padding: 14px 22px 0">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; background: #E3E8E4; border-radius: 16px; padding: 5px">
+<sc-for list="{{listTabs}}" as="lt" hint-placeholder-count="2">
+<button onClick="{{lt.pick}}" style="min-height: 44px; border-radius: 12px; border: none; background: {{lt.bg}}; color: {{lt.color}}; font-weight: 700; font-size: 14px">{{lt.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="flex: 1; overflow-y: auto; padding: 14px 22px 22px; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{showOffDuty}}" hint-placeholder-val="{{ false }}">
+<div style="background: #fff; border-radius: 20px; padding: 26px 20px; text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4A5863" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<div style="font-weight: 700; font-size: 16px">You’re off duty</div>
+<div style="font-size: 14px; color: #4A5863">Go on duty to receive new pickup and delivery bookings.</div>
+</div>
+</sc-if>
+<sc-if value="{{showEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="background: #fff; border-radius: 20px; padding: 26px 20px; text-align: center; font-size: 14px; color: #4A5863">{{emptyText}}</div>
+</sc-if>
+
+<sc-for list="{{visible}}" as="b" hint-placeholder-count="3">
+<div style="background: #fff; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="padding: 5px 10px; border-radius: 10px; font-size: 12px; font-weight: 700; background: {{b.kindBg}}; color: {{b.kindFg}}">{{b.kindLabel}}</span>
+<span style="font-size: 13px; color: #4A5863">{{b.id}} · {{b.distance}}</span>
+</div>
+<div style="display: flex; gap: 12px; align-items: flex-start">
+<span style="width: 40px; height: 40px; border-radius: 12px; background: #E4EEF8; color: {{accent}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 3px">
+<span style="font-weight: 700; font-size: 15px">{{b.customer}}</span>
+<span style="font-size: 13px; color: #4A5863">{{b.address}}</span>
+<span style="font-size: 13px; color: #4A5863">{{b.slot}} · {{b.kg}} kg</span>
+</span>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; background: #F3F5F2; border-radius: 12px; padding: 10px 12px; font-size: 13px">
+<span style="color: #4A5863">{{b.payNote}}</span>
+<span style="font-weight: 700">{{b.totalLabel}}</span>
+</div>
+<sc-if value="{{b.isAvailable}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button onClick="{{b.decline}}" style="min-height: 48px; border-radius: 24px; border: 1.5px solid #C8D0CA; background: #fff; color: #14212B; font-weight: 700; font-size: 14px">Decline</button>
+<button onClick="{{b.accept}}" style="min-height: 48px; border-radius: 24px; border: none; background: {{accent}}; color: #fff; font-weight: 700; font-size: 14px">Accept booking</button>
+</div>
+</sc-if>
+<sc-if value="{{b.isAccepted}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{b.open}}" style="min-height: 48px; border-radius: 24px; border: none; background: #14212B; color: #fff; font-weight: 700; font-size: 14px">{{b.openLabel}}</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- ===== ACTIVE JOB ===== -->
+<sc-if value="{{isJob}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; min-height: 0">
+<div style="position: relative; height: 330px; flex-shrink: 0">
+<svg width="100%" height="100%" viewBox="0 0 390 330" preserveAspectRatio="none" style="position: absolute; inset: 0" aria-hidden="true">
+<rect width="390" height="330" fill="#E3EAE2"></rect>
+<rect x="250" y="40" width="110" height="80" rx="10" fill="#CFE0C9"></rect><rect x="30" y="220" width="100" height="70" rx="10" fill="#CFE0C9"></rect>
+<path d="M0 170 C 100 150, 230 200, 390 160" stroke="#fff" stroke-width="18" fill="none"></path>
+<path d="M160 0 L 190 330" stroke="#fff" stroke-width="13" fill="none"></path>
+<path d="M0 80 L 390 100" stroke="#fff" stroke-width="8" fill="none"></path>
+<path d="M0 290 L 390 270" stroke="#fff" stroke-width="8" fill="none"></path>
+<path d="M90 260 C 130 200, 170 180, 210 170 S 280 130, 300 110" stroke="{{accent}}" stroke-width="5" fill="none" stroke-linecap="round"></path>
+</svg>
+<a href="#" onClick="{{backToList}}" aria-label="Back to bookings" style="position: absolute; left: 18px; top: 22px; width: 44px; height: 44px; border-radius: 22px; background: #fff; display: flex; align-items: center; justify-content: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14212B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+</a>
+<span style="position: absolute; left: 23%; top: 79%; transform: translate(-50%, -50%); width: 38px; height: 38px; border-radius: 19px; background: {{accent}}; border: 3px solid #fff; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 6h13v10H1zM14 10h4l3 3v3h-7"></path><circle cx="5.5" cy="18" r="2"></circle><circle cx="17.5" cy="18" r="2"></circle></svg>
+</span>
+<span style="position: absolute; left: 77%; top: 33%; transform: translate(-50%, -100%)">
+<svg width="38" height="46" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 47s16-15.6 16-27A16 16 0 0 0 4 20c0 11.4 16 27 16 27z" fill="#E0662A" stroke="#fff" stroke-width="2.5"></path><circle cx="20" cy="20" r="6" fill="#fff"></circle></svg>
+</span>
+<a href="#" style="position: absolute; right: 18px; bottom: 18px; min-height: 44px; padding: 0 16px; border-radius: 22px; background: #14212B; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; text-decoration: none">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"></path></svg>Navigate in Google Maps</a>
+</div>
+
+<div style="flex: 1; overflow-y: auto; margin-top: -20px; background: #F3F5F2; border-radius: 24px 24px 0 0; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; position: relative">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="padding: 5px 10px; border-radius: 10px; font-size: 12px; font-weight: 700; background: {{job.kindBg}}; color: {{job.kindFg}}">{{job.kindLabel}}</span>
+<span style="font-size: 13px; color: #4A5863">{{job.id}} · {{job.distance}}</span>
+</div>
+<div style="background: #fff; border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 12px">
+<span style="width: 44px; height: 44px; border-radius: 22px; background: #E4EEF8; color: {{accent}}; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0">{{job.initials}}</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 700; font-size: 15px">{{job.customer}}</span><span style="font-size: 13px; color: #4A5863">{{job.address}}</span></span>
+<button aria-label="Call customer" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+</button>
+</div>
+
+<div style="background: #fff; border-radius: 18px; padding: 16px; display: flex; flex-direction: column">
+<sc-for list="{{jobSteps}}" as="js" hint-placeholder-count="4">
+<div style="display: flex; gap: 12px">
+<div style="display: flex; flex-direction: column; align-items: center">
+<span style="width: 22px; height: 22px; border-radius: 11px; background: {{js.dot}}; border: 2px solid {{js.ring}}; box-sizing: border-box; flex-shrink: 0; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{js.done}}" hint-placeholder-val="{{ true }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if>
+</span>
+<sc-if value="{{js.hasLine}}" hint-placeholder-val="{{ true }}"><span style="width: 2px; flex: 1; min-height: 18px; background: {{js.line}}"></span></sc-if>
+</div>
+<span style="padding-bottom: 12px; font-size: 14px; font-weight: {{js.weight}}; color: {{js.color}}">{{js.label}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; background: {{job.payBg}}; border-radius: 14px; padding: 12px 14px; font-size: 14px">
+<span style="color: {{job.payFg}}; font-weight: 700">{{job.payNote}}</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800; color: {{job.payFg}}">{{job.totalLabel}}</span>
+</div>
+</div>
+
+<footer style="background: #fff; border-top: 1px solid #E1E6E2; padding: 14px 22px 22px">
+<button onClick="{{advance}}" style="width: 100%; min-height: 54px; border-radius: 27px; border: none; background: {{accent}}; color: #fff; font-weight: 700; font-size: 16px">{{actionLabel}}</button>
+</footer>
+</div>
+</sc-if>
+
+<!-- ===== JOB DONE ===== -->
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 80px 26px 30px; gap: 20px">
+<span style="width: 96px; height: 96px; border-radius: 48px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+</span>
+<div>
+<div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800">Job completed</div>
+<div style="font-size: 14px; color: #4A5863; margin-top: 6px">{{job.id}} · {{job.kindLabel}} for {{job.customer}}</div>
+</div>
+<div style="width: 100%; box-sizing: border-box; background: #fff; border-radius: 18px; padding: 16px; display: flex; justify-content: space-between; font-size: 14px">
+<span style="color: #4A5863">{{job.doneNote}}</span><span style="font-weight: 700">{{job.totalLabel}}</span>
+</div>
+<div style="flex: 1"></div>
+<button onClick="{{backToList}}" style="width: 100%; min-height: 54px; border-radius: 27px; border: none; background: #14212B; color: #fff; font-weight: 700; font-size: 16px">Back to bookings</button>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#1E63A8","options":["#1E63A8","#0F766E","#6D3FC0","#14212B"]},"startScreen":{"editor":null},"startJob":{"editor":null},"startStep":{"editor":null},"startDuty":{"editor":null},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const p = props || {};
+    const scr = p.startScreen ?? 'list';
+    const jobId = p.startJob ?? null;
+    const bookings = [
+      { id: 'LH-0003', customer: 'Ana Reyes', kind: 'pickup', address: 'Brgy. Poblacion · [STREET]', distance: '1.2 km', slot: 'Today, 4–6 PM', kg: 12, add: 8, pay: 'cash', state: 'available' },
+      { id: 'LH-0008', customer: 'Carlo Mendoza', kind: 'delivery', address: 'Brgy. Mabini · [STREET]', distance: '2.1 km', slot: 'Today, 4–6 PM', kg: 9, add: 0, pay: 'cash', state: 'available' },
+      { id: 'LH-0006', customer: 'Paolo Tan', kind: 'pickup', address: 'Brgy. Bagong Silang · [STREET]', distance: '2.8 km', slot: 'Tomorrow, 9–11 AM', kg: 15, add: 5, pay: 'cash', state: 'available' },
+      { id: 'LH-0001', customer: 'Maria Santos', kind: 'delivery', address: 'Brgy. San Isidro · [STREET]', distance: '1.9 km', slot: 'Today, 2–4 PM', kg: 10, add: 5, pay: 'gcash', state: 'available' }
+    ];
+    if (jobId) bookings.forEach((b) => { if (b.id === jobId) b.state = 'accepted'; });
+    this.state = {
+      screen: scr, listTab: 'available', onDuty: p.startDuty === false || p.startDuty === 'false' ? false : true,
+      jobId, step: Number(p.startStep ?? 0), done: 0, bookings
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#1E63A8';
+    const rate = 30, fee = 60;
+    const peso = (n) => '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const stepsFor = (kind, cash) => kind === 'pickup'
+      ? ['Head to customer', 'Arrived at pickup point', 'Laundry picked up & weighed', 'Dropped off at shop']
+      : (cash ? ['Collect laundry at shop', 'On the way to customer', 'Arrived at drop-off', 'Cash collected', 'Delivered'] : ['Collect laundry at shop', 'On the way to customer', 'Arrived at drop-off', 'Delivered']);
+    const actionsFor = (kind, cash) => kind === 'pickup'
+      ? ['Start trip', 'I’ve arrived', 'Confirm pickup', 'Drop off at shop']
+      : (cash ? ['Picked up at shop', 'Start trip', 'I’ve arrived', 'Cash received', 'Mark as delivered'] : ['Picked up at shop', 'Start trip', 'I’ve arrived', 'Mark as delivered']);
+
+    const decorate = (b) => {
+      const kg = Math.max(8, b.kg);
+      const total = kg * rate + kg * b.add + fee;
+      const isPickup = b.kind === 'pickup';
+      const cash = b.pay === 'cash';
+      return {
+        ...b, kg, total, totalLabel: peso(total),
+        kindLabel: isPickup ? 'Pickup' : 'Return delivery',
+        kindBg: isPickup ? '#E4EEF8' : '#FFF1E8', kindFg: isPickup ? '#174B80' : '#8A3A12',
+        payNote: isPickup ? (cash ? 'Cash on return · order total' : 'GCash · order total') : (cash ? 'Collect cash' : 'Paid via GCash'),
+        payBg: !isPickup && cash ? '#FFF1E8' : '#E6F2EA', payFg: !isPickup && cash ? '#8A3A12' : '#1D5E36',
+        doneNote: isPickup ? 'Laundry dropped at shop' : (cash ? 'Cash collected' : 'Paid via GCash'),
+        initials: b.customer.split(' ').map((w) => w[0]).join('').slice(0, 2),
+        isAvailable: b.state === 'available', isAccepted: b.state === 'accepted',
+        openLabel: s.jobId === b.id ? 'Continue job' : 'Start job',
+        accept: () => this.setState({ bookings: s.bookings.map((x) => x.id === b.id ? { ...x, state: 'accepted' } : x), jobId: b.id, step: 0, screen: 'job' }),
+        decline: () => this.setState({ bookings: s.bookings.map((x) => x.id === b.id ? { ...x, state: 'declined' } : x) }),
+        open: () => this.setState({ jobId: b.id, screen: 'job', step: s.jobId === b.id ? s.step : 0 })
+      };
+    };
+    const all = s.bookings.map(decorate);
+    const avail = all.filter((b) => b.isAvailable);
+    const accepted = all.filter((b) => b.isAccepted);
+    const listSrc = s.listTab === 'available' ? avail : accepted;
+    const visible = s.onDuty ? listSrc : [];
+
+    const job = all.find((b) => b.id === s.jobId) || all[0];
+    const cash = job.pay === 'cash';
+    const steps = stepsFor(job.kind, cash);
+    const actions = actionsFor(job.kind, cash);
+    const jobSteps = steps.map((label, i) => ({
+      label, done: i < s.step, hasLine: i < steps.length - 1,
+      dot: i < s.step ? accent : '#fff', ring: i <= s.step ? accent : '#C8D0CA',
+      line: i < s.step ? accent : '#DCE2DD', weight: i === s.step ? 700 : 500,
+      color: i <= s.step ? '#14212B' : '#6B7780'
+    }));
+
+    const listTabs = [['available', 'Available (' + avail.length + ')'], ['accepted', 'My jobs (' + accepted.length + ')']].map(([id, label]) => ({
+      label, bg: s.listTab === id ? '#fff' : 'transparent', color: s.listTab === id ? '#14212B' : '#4A5863', pick: () => this.setState({ listTab: id })
+    }));
+
+    return {
+      accent, isList: s.screen === 'list', isJob: s.screen === 'job', isDone: s.screen === 'done',
+      onDuty: s.onDuty, dutyLabel: s.onDuty ? 'On duty' : 'Off duty', dutyBg: s.onDuty ? '#1D7A4A' : '#4A5863', knobLeft: s.onDuty ? 19 : 3,
+      toggleDuty: () => this.setState({ onDuty: !s.onDuty }),
+      availCount: avail.length, acceptedCount: accepted.length, doneCount: s.done,
+      listTabs, visible,
+      showOffDuty: !s.onDuty, showEmpty: s.onDuty && listSrc.length === 0,
+      emptyText: s.listTab === 'available' ? 'No new bookings right now. New ones will appear here.' : 'You haven’t accepted any bookings yet.',
+      job, jobSteps, actionLabel: actions[Math.min(s.step, actions.length - 1)],
+      advance: () => {
+        if (s.step < steps.length - 1) { this.setState({ step: s.step + 1 }); return; }
+        this.setState({ screen: 'done', done: s.done + 1, bookings: s.bookings.map((x) => x.id === job.id ? { ...x, state: 'completed' } : x) });
+      },
+      backToList: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'list', listTab: s.screen === 'done' ? 'available' : s.listTab }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
