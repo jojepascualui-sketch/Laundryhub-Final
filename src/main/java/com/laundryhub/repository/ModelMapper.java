@@ -142,6 +142,7 @@ public final class ModelMapper {
                 .status(OrderStatus.fromCode(row.getString("status")))
                 .riderId(row.getString("rider_id"))
                 .createdAt(row.getString("created_at"))
+                .cancelReason(row.getString("cancel_reason"))
                 .build();
     }
 

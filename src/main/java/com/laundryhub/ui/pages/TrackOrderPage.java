@@ -8,12 +8,14 @@ import com.laundryhub.model.PaymentStatus;
 import com.laundryhub.model.Role;
 import com.laundryhub.model.ShopSettings;
 import com.laundryhub.model.StatusEvent;
+import com.laundryhub.service.CancellationPolicy;
 import com.laundryhub.service.CatalogCache;
 import com.laundryhub.service.OrderTimeline;
 import com.laundryhub.ui.BackHeader;
 import com.laundryhub.ui.Badge;
 import com.laundryhub.ui.Browser;
 import com.laundryhub.ui.Button;
+import com.laundryhub.ui.ConfirmSheet;
 import com.laundryhub.ui.CustomerShell;
 import com.laundryhub.ui.Dom;
 import com.laundryhub.ui.EmptyState;
@@ -40,7 +42,8 @@ import org.teavm.jso.dom.html.HTMLElement;
 /**
  * Screen 07: track an order. Map with shop, rider (live GPS from riders.last_lat/last_lng) and
  * customer markers, rider card with a call button, and the status timeline from order_status_history.
- * Refreshes every 10 seconds while open and stops when the user leaves.
+ * Refreshes every 10 seconds while open and stops when the user leaves. While the order is PENDING
+ * and not picked up, "Cancel order" cancels it (rpc cancel_order).
  */
 public final class TrackOrderPage extends Page {
 
@@ -65,6 +68,8 @@ public final class TrackOrderPage extends Page {
     private HTMLElement timelineSlot;
     private HTMLElement paymentSlot;
     private HTMLElement statusBadgeSlot;
+    private HTMLElement noticeSlot;
+    private HTMLElement cancelSlot;
     private GoogleMaps.GMap map;
     private GoogleMaps.Marker riderMarker;
     private GoogleMaps.Overlay route;
@@ -191,6 +196,8 @@ public final class TrackOrderPage extends Page {
         drawRider();
         drawTimeline();
         drawPayment();
+        drawNotice();
+        drawCancel();
         drawMap();
     }
 
@@ -202,9 +209,8 @@ public final class TrackOrderPage extends Page {
         statusBadgeSlot = Dom.div("track__badge", Dom.el("span", null));
         body.appendChild(statusBadgeSlot);
 
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            body.appendChild(Dom.text("div", "notice notice--warn", "This order was cancelled. Contact the shop if you have questions."));
-        }
+        noticeSlot = Dom.div("track__notice");
+        body.appendChild(noticeSlot);
 
         HTMLElement left = Dom.div("track__col");
         HTMLElement right = Dom.div("track__col");
@@ -221,7 +227,8 @@ public final class TrackOrderPage extends Page {
         }
         timelineSlot = Dom.div("card track__timeline");
         paymentSlot = Dom.div("card");
-        Dom.append(right, timelineSlot, paymentSlot);
+        cancelSlot = Dom.div("track__cancel");
+        Dom.append(right, timelineSlot, paymentSlot, cancelSlot);
         body.appendChild(Dom.div("track__grid", left, right));
         mapFitted = false;
         map = null;
@@ -245,6 +252,11 @@ public final class TrackOrderPage extends Page {
             return;
         }
         Dom.clear(riderSlot);
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            riderSlot.appendChild(Dom.div("card rider-card rider-card--empty",
+                    Dom.text("span", "muted", "No rider needed. This order was cancelled.")));
+            return;
+        }
         if (rider == null) {
             String text = order.getStatus().isClosed() ? "No rider assigned."
                     : "Waiting for a rider to accept your booking. This page updates by itself.";
@@ -269,6 +281,10 @@ public final class TrackOrderPage extends Page {
         Dom.clear(timelineSlot);
         timelineSlot.appendChild(Dom.text("h2", "card__title", "Order status"));
         List<OrderTimeline.Step> steps = OrderTimeline.build(order, events);
+        if (steps.isEmpty()) {
+            timelineSlot.appendChild(Dom.text("p", "muted", "Cancelled. There will be no more updates for this order."));
+            return;
+        }
         HTMLElement ol = Dom.el("ol", "timeline");
         for (int i = 0; i < steps.size(); i++) {
             OrderTimeline.Step step = steps.get(i);
@@ -327,6 +343,55 @@ public final class TrackOrderPage extends Page {
             });
             Dom.append(paymentSlot, ref.getElement(), resend.getElement());
         }
+    }
+
+    private void drawNotice() {
+        Dom.clear(noticeSlot);
+        if (order.getStatus() != OrderStatus.CANCELLED) {
+            return;
+        }
+        String what = order.getCancelReason() == null ? "This order was cancelled." : order.getCancelReason() + ".";
+        String refund = CancellationPolicy.refundNote(order);
+        noticeSlot.appendChild(Dom.text("div", "notice notice--warn", what
+                + (refund == null ? " Contact the shop if you have questions." : " " + refund)));
+    }
+
+    private void drawCancel() {
+        Dom.clear(cancelSlot);
+        if (!CancellationPolicy.customerCanCancel(order, events)) {
+            return;
+        }
+        Button cancel = new Button("Cancel order", Button.Variant.OUTLINE, this::confirmCancel).block(true);
+        cancel.getElement().getClassList().add("cancel-link");
+        Dom.append(cancelSlot, cancel.getElement(), Dom.text("p", "cancel-note", order.isDelivery()
+                ? "You can cancel until the rider picks up your laundry."
+                : "You can cancel until you drop off your laundry at the shop."));
+    }
+
+    private void confirmCancel() {
+        boolean paid = order.getPaymentStatus() == PaymentStatus.PAID && !order.isCash();
+        String message = "Order #" + order.getOrderNo() + " will be cancelled"
+                + (order.getRiderId() != null ? " and your rider will be told not to come" : "") + ". "
+                + (paid ? "You paid by GCash, so the shop will contact you about your refund."
+                        : "This can't be undone.");
+        ConfirmSheet[] sheet = new ConfirmSheet[1];
+        sheet[0] = new ConfirmSheet("Cancel this order?", message, CancellationPolicy.CUSTOMER_REASONS,
+                "Yes, cancel order", "Keep my order",
+                reason -> ctx.getOrders().cancelOrder(order.getId(), reason, new Callback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        sheet[0].close();
+                        Toast.success("Order #" + order.getOrderNo() + " cancelled.");
+                        refresh(false);
+                    }
+
+                    @Override
+                    public void onError(ApiException error) {
+                        sheet[0].fail(error.getMessage());
+                        refresh(false);
+                    }
+                }));
+        sheet[0].open();
     }
 
     private static HTMLElement row(String label, String value) {

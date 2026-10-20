@@ -265,7 +265,12 @@ public final class AdminOrdersPage extends Page {
                 infoTile("Fabric soap", o.getSoapName()),
                 infoTile("Schedule", o.getTimeSlot()));
 
-        HTMLElement card = Dom.div("card admin-detail", head, tiles, locationSection(o), statusSection(o));
+        HTMLElement card = Dom.div("card admin-detail", head, tiles);
+        if (o.getStatus() == OrderStatus.CANCELLED) {
+            card.appendChild(Dom.text("div", "notice notice--warn",
+                    o.getCancelReason() == null ? "Cancelled." : o.getCancelReason() + "."));
+        }
+        Dom.append(card, locationSection(o), statusSection(o));
         if (o.isDelivery()) {
             card.appendChild(riderSection(o));
         }

@@ -62,6 +62,12 @@ public final class SupabaseRiderJobRepository implements RiderJobRepository {
     }
 
     @Override
+    public void releaseJob(long jobId, String reason, Callback<Void> callback) {
+        client.rpc("release_job", new JsonObject().put("p_job_id", jobId).put("p_reason", reason),
+                Callbacks.ignoreResult(callback));
+    }
+
+    @Override
     public void decline(long jobId, Callback<Void> callback) {
         client.rpc("decline_job", new JsonObject().put("p_job_id", jobId), Callbacks.ignoreResult(callback));
     }

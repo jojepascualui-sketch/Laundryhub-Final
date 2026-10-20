@@ -155,6 +155,8 @@ button:disabled { cursor: not-allowed; }
 .btn--link {
   background: none; color: var(--accent); min-height: var(--touch-min); padding: 8px 4px; font-size: 14px;
 }
+.btn--danger { background: var(--error); color: #fff; }
+.btn--danger:hover:not(:disabled) { background: #8E1B12; }
 .btn:disabled:not(.btn--primary) { opacity: .55; }
 .btn .btn__spinner { display: none; }
 .btn.is-loading .btn__label, .btn.is-loading > .icon { visibility: hidden; }
@@ -1009,4 +1011,45 @@ button:disabled { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   .picker__pin, .picker__pin-shadow { transition: none; }
   .picker__map:not(.has-pin) .picker__pin { animation: none; }
+}
+
+/* ------------------------------------------------------------------ confirm sheet (cancel order / job) */
+.sheet {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(20, 33, 43, 0);
+  display: flex; align-items: flex-end; justify-content: center;
+  transition: background-color .2s;
+}
+.sheet.is-open { background: rgba(20, 33, 43, .45); }
+.sheet__panel {
+  width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto;
+  background: var(--surface); color: var(--ink);
+  border-radius: 24px 24px 0 0;
+  padding: 10px 22px calc(22px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 12px;
+  transform: translateY(100%); transition: transform .22s ease-out;
+}
+.sheet.is-open .sheet__panel { transform: none; }
+.sheet__handle { width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); align-self: center; }
+.sheet__icon {
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--error-bg); color: var(--error); margin-top: 6px;
+}
+.sheet__title { font-family: var(--font-heading); font-size: 21px; margin: 0; }
+.sheet__message { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.sheet__label { font-size: 13px; font-weight: 700; color: var(--subtle); margin-top: 4px; }
+.sheet__reasons { display: flex; flex-wrap: wrap; gap: 8px; }
+.sheet__error { margin: 0; }
+.sheet__actions { display: flex; flex-direction: column-reverse; gap: 10px; margin-top: 6px; }
+.cancel-link { color: var(--error); align-self: center; }
+.cancel-note { font-size: 13px; color: var(--subtle); text-align: center; margin: 0; }
+@media (min-width: 768px) {
+  .sheet { align-items: center; padding: 24px; }
+  .sheet__panel { border-radius: 24px; padding: 22px 26px 26px; transform: translateY(16px); opacity: 0; transition: transform .2s, opacity .2s; }
+  .sheet.is-open .sheet__panel { opacity: 1; }
+  .sheet__handle { display: none; }
+  .sheet__actions { flex-direction: row; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet, .sheet__panel { transition: none; }
 }

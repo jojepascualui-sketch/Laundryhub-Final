@@ -18,7 +18,9 @@ public class Button extends Component {
         /** White pill on blue (Start laundry order). */
         LIGHT("btn--light"),
         /** Text only in accent (Sign up, View all). */
-        LINK("btn--link");
+        LINK("btn--link"),
+        /** Red, white text (Yes, cancel order). */
+        DANGER("btn--danger");
 
         private final String cssClass;
 

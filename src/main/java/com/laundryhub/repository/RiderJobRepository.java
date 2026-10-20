@@ -32,6 +32,16 @@ public interface RiderJobRepository {
     void accept(long jobId, Callback<RiderJob> callback);
 
     /**
+     * Rider gives an accepted job back before taking the laundry (rpc release_job).
+     * The job becomes available to other riders.
+     *
+     * @param jobId    job id
+     * @param reason   reason chosen by the rider, may be null
+     * @param callback called when released; error 409 when the laundry was already taken
+     */
+    void releaseJob(long jobId, String reason, Callback<Void> callback);
+
+    /**
      * @param jobId    job id
      * @param callback called when hidden for this rider
      */

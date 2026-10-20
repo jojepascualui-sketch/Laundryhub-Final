@@ -67,6 +67,15 @@ public interface OrderRepository {
     void updateStatus(long orderId, OrderStatus status, Callback<Void> callback);
 
     /**
+     * Customer cancels their own order (rpc cancel_order). Allowed while PENDING and not picked up.
+     *
+     * @param orderId  order id
+     * @param reason   reason chosen by the customer, may be null
+     * @param callback called when cancelled; error 409 with a friendly message when too late
+     */
+    void cancelOrder(long orderId, String reason, Callback<Void> callback);
+
+    /**
      * Marks a cash order as paid (walk-in customer paid at the counter).
      *
      * @param orderId  order id

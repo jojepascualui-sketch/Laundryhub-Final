@@ -9,11 +9,13 @@ import com.laundryhub.model.Rider;
 import com.laundryhub.model.RiderJob;
 import com.laundryhub.model.Role;
 import com.laundryhub.model.ShopSettings;
+import com.laundryhub.service.CancellationPolicy;
 import com.laundryhub.service.CatalogCache;
 import com.laundryhub.service.RiderBoard;
 import com.laundryhub.ui.BookingCard;
 import com.laundryhub.ui.Browser;
 import com.laundryhub.ui.Button;
+import com.laundryhub.ui.ConfirmSheet;
 import com.laundryhub.ui.Dom;
 import com.laundryhub.ui.EmptyState;
 import com.laundryhub.ui.IconButton;
@@ -38,7 +40,8 @@ import org.teavm.jso.dom.html.HTMLElement;
  * Screens R2 / R3 / R4: an accepted job. Map with "Navigate in Google Maps", customer card with a
  * call button, the step checklist and one big button whose label follows the step
  * (rpc advance_job on each tap). Cash return deliveries include "Cash received". When the last step
- * is done the "Job completed" screen is shown. Desktop: map left, details right.
+ * is done the "Job completed" screen is shown. Until the rider has the laundry, "Cancel job" gives the
+ * job back to other riders (rpc release_job). Desktop: map left, details right.
  */
 public final class RiderJobPage extends Page {
 
@@ -202,6 +205,11 @@ public final class RiderJobPage extends Page {
         HTMLElement sheet = Dom.div("rider-job__sheet", head, customer, checklist, payment);
         HTMLElement footer = Dom.el("footer", "rider-job__footer");
         footer.appendChild(action.getElement());
+        if (CancellationPolicy.riderCanRelease(job)) {
+            Button cancel = new Button("Cancel job", Button.Variant.LINK, this::confirmRelease);
+            cancel.getElement().getClassList().add("cancel-link");
+            footer.appendChild(cancel.getElement());
+        }
         Dom.clear(root);
         Dom.append(root, mapArea, Dom.div("rider-job__panel", sheet, footer));
     }
@@ -226,6 +234,33 @@ public final class RiderJobPage extends Page {
                 }
             }
         });
+    }
+
+    private void confirmRelease() {
+        boolean pickup = RiderJob.TYPE_PICKUP.equals(booking.getJob().getType());
+        ConfirmSheet[] sheet = new ConfirmSheet[1];
+        sheet[0] = new ConfirmSheet("Cancel this job?",
+                "You haven't taken the laundry yet, so the " + (pickup ? "pickup" : "delivery") + " for "
+                        + booking.getOrder().getOrderNo() + " goes back to the bookings list for another rider. "
+                        + "The customer's order stays active.",
+                CancellationPolicy.RIDER_REASONS, "Yes, cancel job", "Keep this job",
+                reason -> ctx.getRiderJobs().releaseJob(jobId, reason, new Callback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        sheet[0].close();
+                        Toast.success("Job cancelled. Other riders can take it now.");
+                        ctx.navigate("#/rider");
+                    }
+
+                    @Override
+                    public void onError(ApiException error) {
+                        sheet[0].fail(error.getMessage());
+                        if (error.isConflict()) {
+                            load();
+                        }
+                    }
+                }));
+        sheet[0].open();
     }
 
     // ---- R4 -------------------------------------------------------------------------

@@ -33,6 +33,7 @@ public final class Order {
     private final OrderStatus status;
     private final String riderId;
     private final String createdAt;
+    private final String cancelReason;
 
     private Order(Builder b) {
         if (b.orderNo == null || b.orderNo.isEmpty()) {
@@ -66,6 +67,7 @@ public final class Order {
         this.status = b.status == null ? OrderStatus.PENDING : b.status;
         this.riderId = b.riderId;
         this.createdAt = b.createdAt;
+        this.cancelReason = b.cancelReason;
     }
 
     /** @return database id */
@@ -224,6 +226,11 @@ public final class Order {
         return createdAt;
     }
 
+    /** @return why the order was cancelled ("Cancelled by customer: …"), or null */
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
     /** @return true for pickup &amp; delivery orders */
     public boolean isDelivery() {
         return serviceType.requiresLocation();
@@ -258,6 +265,7 @@ public final class Order {
         private OrderStatus status;
         private String riderId;
         private String createdAt;
+        private String cancelReason;
 
         /** @param v id @return this */
         public Builder id(long v) { id = v; return this; }
@@ -309,6 +317,9 @@ public final class Order {
         public Builder riderId(String v) { riderId = v; return this; }
         /** @param v created at @return this */
         public Builder createdAt(String v) { createdAt = v; return this; }
+
+        /** @param v cancel reason @return this */
+        public Builder cancelReason(String v) { cancelReason = v; return this; }
 
         /** @return the order */
         public Order build() {

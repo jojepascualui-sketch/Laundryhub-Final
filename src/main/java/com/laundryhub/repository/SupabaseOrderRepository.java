@@ -152,6 +152,12 @@ public final class SupabaseOrderRepository implements OrderRepository {
     }
 
     @Override
+    public void cancelOrder(long orderId, String reason, Callback<Void> callback) {
+        client.rpc("cancel_order", new JsonObject().put("p_order_id", orderId).put("p_reason", reason),
+                Callbacks.ignoreResult(callback));
+    }
+
+    @Override
     public void markPaid(long orderId, Callback<Void> callback) {
         client.update("orders", Query.filter().eq("id", orderId), new JsonObject().put("payment_status", "PAID"),
                 Callbacks.ignoreResult(callback));

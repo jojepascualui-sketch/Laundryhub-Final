@@ -15,13 +15,15 @@ All SQL is in `supabase/migrations/`. Run the files **in order**.
 | `0009_seed_settings_and_soaps.sql` | Default prices, shop settings, the 4 soaps |
 | `0010_seed_sample_orders.sql` | **Optional** sample customers + orders LH-0001…LH-0006 (screen A2) |
 | `0011_rider_login_email.sql` | Lets riders sign in with their mobile number (Rider tab) |
+| `0012_iloilo_shop_and_price.sql` | The Laundry Hub Iloilo location (PHJ6+X5C) and ₱20 per kg |
+| `0013_cancellations.sql` | `cancel_order` (customer) and `release_job` (rider), `orders.cancel_reason` / `cancelled_at` |
 
 ## How to run the files
 
 ### Option A: SQL Editor (no installs)
 1. Supabase dashboard → **SQL Editor** → **New query**.
 2. Open `0001_types.sql` in VS Code, copy everything, paste, click **Run**. It should say *Success. No rows returned*.
-3. Repeat for `0002` … `0009` in order, then `0011` (and `0010` if you want sample data).
+3. Repeat for `0002` … `0009` in order, then `0011`, `0012`, `0013` (and `0010` if you want sample data).
 
 If a file fails halfway, fix the cause and run **that file** again. To start over completely,
 run this first (it deletes all Laundry HUB data):
@@ -217,6 +219,10 @@ rider accept_job(RETURN) → advance_job ×4 (GCash) or ×5 (Cash)
   step 4 "Cash received"     → payment PAID (cash only)
   last  "Mark as delivered"  → order COMPLETED
 admin sets CANCELLED        → open jobs CANCELLED
+customer cancel_order       → only while PENDING and the PICKUP job is before step 3 → CANCELLED
+rider release_job           → only before taking the laundry (PICKUP step < 3, RETURN step 0)
+                              job back to AVAILABLE (RETURN: WAITING if the order is not READY yet),
+                              hidden from that rider, history note; the order stays active
 ```
 
 Walk-in orders have no rider jobs; the admin moves them PENDING → WASHING → READY → COMPLETED.
@@ -236,6 +242,8 @@ Base URL `SUPABASE_URL/rest/v1`. Headers: `apikey: <publishable key>`,
 | `accept_job` | on-duty RIDER | `p_job_id` |
 | `decline_job` | RIDER | `p_job_id` |
 | `advance_job` | job's rider | `p_job_id` |
+| `release_job` | job's rider | `p_job_id, p_reason` (gives the job back before the laundry is taken) |
+| `cancel_order` | order owner | `p_order_id, p_reason` (PENDING and not picked up; reason saved as `Cancelled by customer: …`) |
 | `rider_login_email` | anyone | `p_mobile` (returns a RIDER's e-mail for mobile sign-in) |
 | `admin_dashboard` | ADMIN/STAFF | `{}` |
 | `admin_reports` | ADMIN/STAFF | `p_from, p_to` (dates `YYYY-MM-DD`) |

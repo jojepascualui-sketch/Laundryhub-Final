@@ -134,11 +134,14 @@ and generates `web-dist/config.js`. `index.html` calls the exported `main()` on 
 
 ## Database (see docs/DATABASE.md)
 
-- Migrations `supabase/migrations/0001…0011` (0010 = optional sample data). Never edit an
+- Migrations `supabase/migrations/0001…0013` (0010 = optional sample data). Never edit an
   applied file; add a new numbered file instead.
 - Role helper is `current_app_role()` (`current_role` is a Postgres keyword).
 - Orders are created only via `rpc place_order`; jobs move only via `accept_job` /
-  `decline_job` / `advance_job`. `rider_jobs.current_step` = steps completed.
+  `decline_job` / `advance_job` / `release_job`. `rider_jobs.current_step` = steps completed.
+- Cancel buttons (0013): customer `rpc cancel_order` on `TrackOrderPage`, rider `rpc release_job` on
+  `RiderJobPage`; when to show them is `service.CancellationPolicy` (the DB enforces the same rules).
+  Both open `ui.ConfirmSheet` (bottom sheet / dialog with reason chips). Admin sees `orders.cancel_reason`.
 - Return-delivery jobs start `WAITING` and become `AVAILABLE` when the order is `READY`.
 - RPC errors: `{"code":"PT4xx","message":"…"}`, where the HTTP status equals the code. Show `message` to the user.
 - Money from the DB is numeric pesos (e.g. `410.00`); convert to centavos for `MoneyFormatter`.
