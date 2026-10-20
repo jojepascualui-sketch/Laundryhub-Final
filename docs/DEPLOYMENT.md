@@ -1,5 +1,8 @@
 # Laundry HUB — Deploying to Vercel
 
+**Live site:** https://laundryhub-final.vercel.app (Vercel project `laundry-hub`).
+In the steps below, `YOUR-APP.vercel.app` means `laundryhub-final.vercel.app`.
+
 Vercel only **hosts** the finished files. Its build machines have no Java, so the site is built on
 your computer (or on GitHub Actions) with `mvnw clean package`, and the folder **`web-dist/`** is uploaded.
 
@@ -48,6 +51,19 @@ At the end it prints your address, e.g. **https://laundry-hub.vercel.app**. The 
 `web-dist/.vercel/` (kept by `mvnw clean`, ignored by git), so later deploys need no questions.
 
 Try a deploy without touching production: `build-and-deploy.cmd preview`.
+
+## Make the site public (Deployment Protection)
+
+New Vercel projects protect every `*.vercel.app` address with a Vercel login ("Vercel Authentication").
+Customers would see a Vercel sign-in page, so it was turned off for this project:
+
+```
+vercel project protection disable laundry-hub --sso
+```
+
+(`laundry-hub.vercel.app` already belongs to someone else, so the production address is
+`laundryhub-final.vercel.app`, set with `vercel alias set <deployment-url> laundryhub-final.vercel.app`.
+It is attached to the project, so every `--prod` deploy updates it.)
 
 ## After the first deploy: allow the new address
 
